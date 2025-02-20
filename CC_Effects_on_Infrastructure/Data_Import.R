@@ -7,8 +7,19 @@ library(readr)
 library(dplyr)
 
 # Loading in the NANDA Data -----------------------------------------------------
-nanda_artsentleisure_Tract10_1990_2021_01P <- read_csv("DATASETS/ICPSR_209163-V2/ICPSR_209163-V2/nanda_artsentleisure_1990-2021_CSVs/nanda_artsentleisure_1990-2021_CSVs/nanda_artsentleisure_Tract10_1990-2021_01P.csv")
-View(nanda_artsentleisure_Tract10_1990_2021_01P)
+
+#nanda_artsentleisure_Tract10_1990_2021_01P <- read_csv("DATASETS/ICPSR_209163-V2/ICPSR_209163-V2/nanda_artsentleisure_1990-2021_CSVs/nanda_artsentleisure_1990-2021_CSVs/nanda_artsentleisure_Tract10_1990-2021_01P.csv")
+#View(nanda_artsentleisure_Tract10_1990_2021_01P)
+
+#Splitting it in half to reduce the filesize for upload purposes
+#n <- 1184544
+#split into two data frames
+#NANDA_Data_Pt1 <- nanda_artsentleisure_Tract10_1990_2021_01P[row.names(nanda_artsentleisure_Tract10_1990_2021_01P) %in% 1:n, ]
+#NANDA_Data_Pt2 <- nanda_artsentleisure_Tract10_1990_2021_01P[row.names(nanda_artsentleisure_Tract10_1990_2021_01P) %in% (n+1):nrow(nanda_artsentleisure_Tract10_1990_2021_01P), ]
+
+NANDA_Data_Pt1 <-readRDS("NANDA_Data_Pt1.rds")
+NANDA_Data_Pt2 <-readRDS("NANDA_Data_Pt2.rds")
+NANDA_Data <- rbind(NANDA_Data_Pt1, NANDA_Data_Pt2)
 
 # Loading in all the census block data for each city we are interested in-----------------------------------------------------
 city_info <- data.frame(
@@ -42,4 +53,5 @@ for (i in 1:nrow(city_info)) {
 #Combine it all
 all_tracts <- bind_rows(tracts_list)
 
-
+#Save for Reference for use in Subsequent Scripts
+save.image("LoadedData.RData")
