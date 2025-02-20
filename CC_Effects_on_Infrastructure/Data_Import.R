@@ -53,5 +53,8 @@ for (i in 1:nrow(city_info)) {
 #Combine it all
 all_tracts <- bind_rows(tracts_list)
 
+#Removing the duplicate data now that we have everything downloaded from Github
+remove(NANDA_Data_Pt1)
+remove(NANDA_Data_Pt2)
 #Save for Reference for use in Subsequent Scripts
 save.image("LoadedData.RData")
