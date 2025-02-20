@@ -8,14 +8,14 @@ library(dplyr)
 
 # Loading in the NANDA Data -----------------------------------------------------
 
-#nanda_artsentleisure_Tract10_1990_2021_01P <- read_csv("DATASETS/ICPSR_209163-V2/ICPSR_209163-V2/nanda_artsentleisure_1990-2021_CSVs/nanda_artsentleisure_1990-2021_CSVs/nanda_artsentleisure_Tract10_1990-2021_01P.csv")
-#View(nanda_artsentleisure_Tract10_1990_2021_01P)
+#nanda_artsentleisure_Tract20 <- read_csv("DATASETS/ICPSR_209163-V2/ICPSR_209163-V2/nanda_artsentleisure_1990-2021_CSVs/nanda_artsentleisure_1990-2021_CSVs/nanda_artsentleisure_Tract20_1990-2021_01P.csv")
+#View(nanda_artsentleisure_Tract20)
 
 #Splitting it in half to reduce the filesize for upload purposes
-#n <- 1184544
+#n <- 1368448
 #split into two data frames
-#NANDA_Data_Pt1 <- nanda_artsentleisure_Tract10_1990_2021_01P[row.names(nanda_artsentleisure_Tract10_1990_2021_01P) %in% 1:n, ]
-#NANDA_Data_Pt2 <- nanda_artsentleisure_Tract10_1990_2021_01P[row.names(nanda_artsentleisure_Tract10_1990_2021_01P) %in% (n+1):nrow(nanda_artsentleisure_Tract10_1990_2021_01P), ]
+#NANDA_Data_Pt1 <- nanda_artsentleisure_Tract20[row.names(nanda_artsentleisure_Tract20) %in% 1:n, ]
+#NANDA_Data_Pt2 <- nanda_artsentleisure_Tract20[row.names(nanda_artsentleisure_Tract20) %in% (n+1):nrow(nanda_artsentleisure_Tract20), ]
 
 NANDA_Data_Pt1 <-readRDS("NANDA_Data_Pt1.rds")
 NANDA_Data_Pt2 <-readRDS("NANDA_Data_Pt2.rds")
