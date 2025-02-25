@@ -74,5 +74,10 @@ all_tracts <- bind_rows(tracts_list)
 #Removing the duplicate data now that we have everything downloaded from Github---------------------------------
 remove(NANDA_Data_Pt1)
 remove(NANDA_Data_Pt2)
+remove(NRI_Table_CensusTracts_Pt1)
+remove(NRI_Table_CensusTracts_Pt2)
+remove(NRI_Table_CensusTracts_Pt3)
+remove(NRI_Table_CensusTracts_Pt4)
+remove(NRI_Table_CensusTracts_Pt5)
 #Save for Reference for use in Subsequent Scripts------------------------------------
 save.image("LoadedData.RData")
