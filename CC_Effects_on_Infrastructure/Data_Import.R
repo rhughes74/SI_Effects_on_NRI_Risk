@@ -6,20 +6,38 @@ library(tidyverse)
 library(readr)
 library(dplyr)
 
-# Loading in the NANDA Data -----------------------------------------------------
+
+# Reference Code: I used this to parse in the .csv after downloading it from https://archive.icpsr.umich.edu/nanda/view/studies/209163 -----------------------------------------------------------------------
 
 #nanda_artsentleisure_Tract20 <- read_csv("DATASETS/ICPSR_209163-V2/ICPSR_209163-V2/nanda_artsentleisure_1990-2021_CSVs/nanda_artsentleisure_1990-2021_CSVs/nanda_artsentleisure_Tract20_1990-2021_01P.csv")
 #View(nanda_artsentleisure_Tract20)
 
-#Splitting it in half to reduce the filesize for upload purposes
-#n <- 1368448
-#split into two data frames
-#NANDA_Data_Pt1 <- nanda_artsentleisure_Tract20[row.names(nanda_artsentleisure_Tract20) %in% 1:n, ]
-#NANDA_Data_Pt2 <- nanda_artsentleisure_Tract20[row.names(nanda_artsentleisure_Tract20) %in% (n+1):nrow(nanda_artsentleisure_Tract20), ]
+# Number of parts to split into
+#num_parts <- 5
 
+#n <- nrow(NRI_Table_CensusTracts)  # total number of rows
+
+# Calculate the size of each part
+#part_size <- floor(n / num_parts)
+
+# Create the 5 data frames
+#NRI_Table_CensusTracts_Pt1 <- NRI_Table_CensusTracts[1:part_size, ]
+#NRI_Table_CensusTracts_Pt2 <- NRI_Table_CensusTracts[(part_size+1):(2*part_size), ]
+#NRI_Table_CensusTracts_Pt3 <- NRI_Table_CensusTracts[(2*part_size+1):(3*part_size), ]
+#NRI_Table_CensusTracts_Pt4 <- NRI_Table_CensusTracts[(3*part_size+1):(4*part_size), ]
+#NRI_Table_CensusTracts_Pt5 <- NRI_Table_CensusTracts[(4*part_size+1):n, ]
+
+# Loading in the NANDA and FEMA Risk Index Data -----------------------------------------------------
 NANDA_Data_Pt1 <-readRDS("NANDA_Data_Pt1.rds")
 NANDA_Data_Pt2 <-readRDS("NANDA_Data_Pt2.rds")
 NANDA_Data <- rbind(NANDA_Data_Pt1, NANDA_Data_Pt2)
+
+NRI_Table_CensusTracts_Pt1 <- read_csv("NRI_Table_CensusTracts_Pt1.rds")
+NRI_Table_CensusTracts_Pt2 <- read_csv("NRI_Table_CensusTracts_Pt2.rds")
+NRI_Table_CensusTracts_Pt3 <- read_csv("NRI_Table_CensusTracts_Pt3.rds")
+NRI_Table_CensusTracts_Pt4 <- read_csv("NRI_Table_CensusTracts_Pt4.rds")
+NRI_Table_CensusTracts_Pt5 <- read_csv("NRI_Table_CensusTracts_Pt5.rds")
+NRI_Table_CensusTracts <- rbind(NRI_Table_CensusTracts_Pt1, NRI_Table_CensusTracts_Pt2,NRI_Table_CensusTracts_Pt3,NRI_Table_CensusTracts_Pt4,NRI_Table_CensusTracts_Pt5)
 
 # Loading in all the census block data for each city we are interested in-----------------------------------------------------
 city_info <- data.frame(
@@ -50,11 +68,11 @@ for (i in 1:nrow(city_info)) {
     tracts_list[[i]] <- city_tracts
   }, silent = TRUE)
 }
-#Combine it all
+#Combine it all-------------------------------------------------------------
 all_tracts <- bind_rows(tracts_list)
 
-#Removing the duplicate data now that we have everything downloaded from Github
+#Removing the duplicate data now that we have everything downloaded from Github---------------------------------
 remove(NANDA_Data_Pt1)
 remove(NANDA_Data_Pt2)
-#Save for Reference for use in Subsequent Scripts
+#Save for Reference for use in Subsequent Scripts------------------------------------
 save.image("LoadedData.RData")
