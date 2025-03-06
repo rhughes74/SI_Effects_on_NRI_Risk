@@ -12,7 +12,7 @@ library(MuMIn)
 
 setwd("CC_Effects_on_Infrastructure")
 load("LoadedData.RData")
-
+load("Filtered_Dataset.rds")
 #Joining by the X-Y Coords-----------------------------------------------------
 
 #Using "data" as a placeholder for county level disaster damage data.
