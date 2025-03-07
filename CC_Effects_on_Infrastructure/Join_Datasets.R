@@ -12,7 +12,7 @@ library(MuMIn)
 
 setwd("CC_Effects_on_Infrastructure")
 load("LoadedData.RData")
-load("Filtered_Dataset.rds")
+
 #Joining by the X-Y Coords-----------------------------------------------------
 
 #Using "data" as a placeholder for county level disaster damage data.
@@ -55,6 +55,9 @@ all_tracts_temp=st_drop_geometry(all_tracts_temp)
 
 Filtered_Dataset <- inner_join(Filtered_Dataset,all_tracts_temp, by = "TRACTFIPS")
 
+
+#Skip to hear to just work off of the Filtered Dataset------------------------------------------------------------------------------------------------------
+Filtered_Dataset <- readRDS("Filtered_Dataset.rds")
 #Evaluating the Variability per Type of Infrastructure--------------------------
 stats= Filtered_Dataset %>%
   group_by(type,year,STATE, COUNTY,city) %>% 
@@ -70,9 +73,9 @@ stats= Filtered_Dataset %>%
 
 #Seeing if the count of a specific kind of Infrastructure influences the RISK_SCORE and by how much?
 Linear_Model = Filtered_Dataset %>% 
-  group_by(year, type) %>% 
+  group_by(type) %>% 
   reframe(lm(formula= RISK_SCORE ~ Infrastructure_Count, data=. ) %>% broom::tidy())
-print("Notably results do not appear to vary much by year as the risk score is only from 2023")
+#Since the risk-score is only from 2023 I can't model over time
 # Summary of the model
 summary(Linear_Model)
 
