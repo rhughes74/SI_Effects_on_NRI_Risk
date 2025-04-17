@@ -14,23 +14,14 @@ library(ggplot2)
 setwd("CC_Effects_on_Infrastructure")
 
 #-----------------------------------------------------------------Filtered Data-set--------------------------------------------------------------------------------------------------------------------------------------
-Filtered_Dataset <- readRDS("Filtered_Dataset.rds")
-Filtered_Dataset_den <- readRDS("Filtered_Dataset_den.rds")
-Filtered_Dataset_aden <- readRDS("Filtered_Dataset_aden.rds")
-
+Filtered_Dataset_den <- readRDS("Filtered_Dataset_den.rds")#Per capita (1000 people)
+Filtered_Dataset_aden <- readRDS("Filtered_Dataset_aden.rds")#Per area (Sq. Miles)
+all_tracts <- readRDS("all_tracts.rds")
 #--------------------------------------------------------------Summary Stats---------------------------------------------------------------------------------------------------------------------------------------------
 
 #Evaluating the Variability per Type of Infrastructure--------------------------
-stats= Filtered_Dataset %>%
-  group_by(type,year,STATE, COUNTY,city) %>% 
-  #Note the NANDA dataset holds information from 1990-2021 whilst the NRI scores only capture the most
-  #recent risk scores from Mar-2023
-  summarise(
-    mean_Infra_Count = mean(Infrastructure_Count, na.rm = TRUE),
-    sd_Infra_Count = sd(Infrastructure_Count, na.rm = TRUE),
-    mean_RISK_VALUE = mean(RISK_VALUE, na.rm = TRUE),
-    sd_RISK_VALUE = sd(RISK_VALUE, na.rm = TRUE)
-  )
+
+#Per Capita
 stats_den= Filtered_Dataset_den %>%
   group_by(den_type,year,STATE, COUNTY,city) %>% 
   #Note the NANDA dataset holds information from 1990-2021 whilst the NRI scores only capture the most
@@ -41,7 +32,17 @@ stats_den= Filtered_Dataset_den %>%
     mean_RISK_VALUE = mean(RISK_VALUE, na.rm = TRUE),
     sd_RISK_VALUE = sd(RISK_VALUE, na.rm = TRUE)
   )
-
+#Per Sq. Mile
+stats_aden= Filtered_Dataset_aden %>%
+  group_by(den_type,year,STATE, COUNTY,city) %>% 
+  #Note the NANDA dataset holds information from 1990-2021 whilst the NRI scores only capture the most
+  #recent risk scores from Mar-2023
+  summarise(
+    mean_Infra_Den = mean(Infrastructure_Density, na.rm = TRUE),
+    sd_Infra_Den = sd(Infrastructure_Density, na.rm = TRUE),
+    mean_RISK_VALUE = mean(RISK_VALUE, na.rm = TRUE),
+    sd_RISK_VALUE = sd(RISK_VALUE, na.rm = TRUE)
+  )
 
 
 #-----------Analyzing via Density per Capita---------------------------------------------------------------------------------------------------------------
@@ -100,27 +101,16 @@ hist(AllRSquared)
 
 #--------------------------------------------------------------Section-END------------------------------------------------------------------------------------------------------------------------------------
 #--------------------------------------------------------------Analyzing via Density per Unit Area------------------------------------------------------------------------------------------------------------
-Filtered_Dataset_aden=Combined_Dataset %>% 
-  select(year,RISK_VALUE,SOVI_SCORE,EAL_VALB,POPULATION, STATE, COUNTY, STCOFIPS, TRACTFIPS, 
-         ,aden_museums,aden_theatricalproductions, aden_amusementparks,aden_movietheaters,aden_zoosaquariumsgardens,aden_bingocardsgambling,aden_poolhallsbowlingalleys,aden_totartsentertainment,aden_hotels,aden_casinohotels) %>% 
-  pivot_longer(cols=c(aden_museums,aden_theatricalproductions, aden_amusementparks,aden_movietheaters,aden_zoosaquariumsgardens,aden_bingocardsgambling,aden_poolhallsbowlingalleys,aden_totartsentertainment,aden_hotels,aden_casinohotels),names_to="den_type",values_to="Infrastructure_Density")
+
+#Filtered_Dataset_aden=Combined_Dataset %>% 
+#  select(year,RISK_VALUE,SOVI_SCORE,EAL_VALB,POPULATION, STATE, COUNTY, STCOFIPS, TRACTFIPS, 
+#         ,aden_museums,aden_theatricalproductions, aden_amusementparks,aden_movietheaters,aden_zoosaquariumsgardens,aden_bingocardsgambling,aden_poolhallsbowlingalleys,aden_totartsentertainment,aden_hotels,aden_casinohotels) %>% 
+#  pivot_longer(cols=c(aden_museums,aden_theatricalproductions, aden_amusementparks,aden_movietheaters,aden_zoosaquariumsgardens,aden_bingocardsgambling,aden_poolhallsbowlingalleys,aden_totartsentertainment,aden_hotels,aden_casinohotels),names_to="den_type",values_to="Infrastructure_Density")
 
 #Filtering down to Cities of Interest-------------------------------------------------------------
-Filtered_Dataset_aden <- inner_join(Filtered_Dataset_aden,all_tracts_temp, by = "TRACTFIPS")
+#Filtered_Dataset_aden <- inner_join(Filtered_Dataset_aden,all_tracts, by = "TRACTFIPS")
 #Filtering out to just the latest census, since NRI does not have year-over-year datapoints
-Filtered_Dataset_aden = Filtered_Dataset_aden %>% filter(year==2020)
-
-stats_aden= Filtered_Dataset_aden %>%
-  group_by(den_type,year,STATE, COUNTY,city) %>% 
-  #Note the NANDA dataset holds information from 1990-2021 whilst the NRI scores only capture the most
-  #recent risk scores from Mar-2023
-  summarise(
-    mean_Infra_Den = mean(Infrastructure_Density, na.rm = TRUE),
-    sd_Infra_Den = sd(Infrastructure_Density, na.rm = TRUE),
-    mean_RISK_VALUE = mean(RISK_VALUE, na.rm = TRUE),
-    sd_RISK_VALUE = sd(RISK_VALUE, na.rm = TRUE)
-  )
-
+#Filtered_Dataset_aden = Filtered_Dataset_aden %>% filter(year==2020)
 
 Linear_Model1 = Filtered_Dataset_aden %>% filter(den_type=='aden_museums') %>% summarize(lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
 Linear_Model2 = Filtered_Dataset_aden %>% filter(den_type=='aden_theatricalproductions') %>% summarize(lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
@@ -141,13 +131,10 @@ Linear_Model_Area= Linear_Model_Area %>% filter(term != "POPULATION")
 Linear_Model_Area= Linear_Model_Area %>% mutate(den_type=c('aden_museums','aden_theatricalproductions','aden_amusementparks','aden_movietheaters','aden_zoosaquariumsgardens','aden_bingocardsgambling','aden_poolhallsbowlingalleys','aden_hotels','aden_casinohotels','aden_totartsentertainment'))
 Full_Area <- full_join(Filtered_Dataset_aden,Linear_Model_Area, by = "den_type")
 
-
-#Since the risk-score is only from 2023 I can't model over time
 # Summary of the model
 
 #Linear_Model_Area=Linear_Model_Area %>% mutate(estimate=scale(estimate))
 hist((Linear_Model_Area$estimate))
-
 
 
 r21=Filtered_Dataset_aden %>% filter(den_type=='aden_museums') %>% lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
@@ -181,7 +168,6 @@ ggplot(Full_Area, aes(x = estimate, y = Infrastructure_Density)) +
   labs(title = "Betas vs. Infrastructure Density per Sq. Mile", x = "Beta Coeff.", y = "Infrastructure Density per Sq. Mile")  # Titles and labels
 
 # (As your level of social infrastructure increases, how much more risk are you experiencing?)
-# Scatterplot of Betas vs. median household income
 
 # Note neither NANDA nor NRI has median household income data saved unfortunately.
 
@@ -192,18 +178,16 @@ ggplot(Full_Capita, aes(x = estimate, y = Infrastructure_Density)) +
 
 # Note population is calculated per census tract so we can't just plot against one another
 
-# Scatter plot of Betas vs. social vulnerability index
+# TODO: Scatter plot of Betas vs. social vulnerability index
 
-#I have to find a way to measure the 2 against one another.
-
-ggplot(Full_Area, aes(x = estimate, y = SOVI_SCORE)) +
-  geom_point(color = "blue", size = 3) +  # Custom point color and size
-  labs(title = "Betas vs. Social Vulnerability Index", x = "Beta Coeff.", y = "Social Vulnerability Index")  # Titles and labels
-
+#ggplot(Full_Area, aes(x = estimate, y = SOVI_SCORE)) +
+#  geom_point(color = "blue", size = 3) +  # Custom point color and size
+#  labs(title = "Betas vs. Social Vulnerability Index", x = "Beta Coeff.", y = "Social Vulnerability Index")  # Titles and labels
+# 
 
 
 #--------------------------------------------------------------Section-END------------------------------------------------------------------------------------------------------------------------------------
-#--------------------------------------------------------------Multi Level Model Section------------------------------------------------------------------------------------------------------------------------------------
+#--------------------------------------------------------------TODO: Multi Level Model Section------------------------------------------------------------------------------------------------------------------------------------
 
 
 #Note to self: examine if density of totarts entertainment, or emps (Employee count) or admission count has a different estimate. 
@@ -214,29 +198,29 @@ ggplot(Full_Area, aes(x = estimate, y = SOVI_SCORE)) +
 #If anything we're describing a shortcoming in how FEMA prioritizes hazards (i.e., in primarily economic terms rather than human needs).
 
 #Creating a Multilevel Model, per Type of Infrastructure, Grouping by State, Country and Tract
-MLM= Filtered_Dataset %>%
-  group_by(type) %>%
-  group_modify(~ {
+#MLM= Filtered_Dataset %>%
+#  group_by(type) %>%
+#  group_modify(~ {
     # Fit the mixed-effects model for each group
-    model <- lmer(RISK_VALUE ~ Infrastructure_Count +POPULATION+(1 |STATE)+ (1 |STATE:STCOFIPS), data = .x)
-    # Extract the tidy results for fixed effects
-    broom.mixed::tidy(model)})
-summary(MLM)
+#    model <- lmer(RISK_VALUE ~ Infrastructure_Count +POPULATION+(1 |STATE)+ (1 |STATE:STCOFIPS), data = .x)
+#    # Extract the tidy results for fixed effects
+#    broom.mixed::tidy(model)})
+#summary(MLM)
 
-MLM_den= Filtered_Dataset_den %>%
-  group_by(den_type) %>%
-  group_modify(~ {
+#MLM_den= Filtered_Dataset_den %>%
+#  group_by(den_type) %>%
+#  group_modify(~ {
     # Fit the mixed-effects model for each group
-    model <- lmer(RISK_VALUE ~ Infrastructure_Density +POPULATION+(1 |STATE)+ (1 |STATE:STCOFIPS), data = .x)
+#    model <- lmer(RISK_VALUE ~ Infrastructure_Density +POPULATION+(1 |STATE)+ (1 |STATE:STCOFIPS), data = .x)
     # Extract the tidy results for fixed effects
-    broom.mixed::tidy(model)})
-summary(MLM_den)
+#    broom.mixed::tidy(model)})
+#summary(MLM_den)
 
-print("Interestingly the raw count per county appears to have a larger effect than the density per county per type of social infrastructure.")
+#print("Interestingly the raw count per county appears to have a larger effect than the density per county per type of social infrastructure.")
 
 
 #Examining the Correlation between Variables as a check:
-summary(lm(formula=Filtered_Dataset$TRACTFIPS ~ Filtered_Dataset$RISK_VALUE, data=Filtered_Dataset))
-summary(lm(formula=Filtered_Dataset$TRACTFIPS ~ Filtered_Dataset$Infrastructure_Count, data=Filtered_Dataset))
-summary(lm(formula=Filtered_Dataset$Infrastructure_Count ~ Filtered_Dataset$RISK_VALUE, data=Filtered_Dataset))
-print("TRACTFIPS Appears to have the biggest effect on the Infrastructure Count and Risk Score.")
+#summary(lm(formula=Filtered_Dataset$TRACTFIPS ~ Filtered_Dataset$RISK_VALUE, data=Filtered_Dataset))
+#summary(lm(formula=Filtered_Dataset$TRACTFIPS ~ Filtered_Dataset$Infrastructure_Count, data=Filtered_Dataset))
+#summary(lm(formula=Filtered_Dataset$Infrastructure_Count ~ Filtered_Dataset$RISK_VALUE, data=Filtered_Dataset))
+#print("TRACTFIPS Appears to have the biggest effect on the Infrastructure Count and Risk Score.")
