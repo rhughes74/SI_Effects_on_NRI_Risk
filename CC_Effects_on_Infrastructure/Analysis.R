@@ -9,14 +9,18 @@ library(dplyr)
 library(lme4)
 library(MuMIn)
 library(ggplot2)
+library(units)
 #library(nlme)
 
 setwd("CC_Effects_on_Infrastructure")
+#We discussed assessing the geographic variation per state
 
 #-----------------------------------------------------------------Filtered Data-set--------------------------------------------------------------------------------------------------------------------------------------
-Filtered_Dataset_den <- readRDS("Filtered_Dataset_den.rds")#Per capita (1000 people)
-Filtered_Dataset_aden <- readRDS("Filtered_Dataset_aden.rds")#Per area (Sq. Miles)
-all_tracts <- readRDS("all_tracts.rds")
+Filtered_Dataset_den <- readRDS("Filtered_Dataset_den.rds")#Per capita, tracts from 25 cities, (1000 people)
+Filtered_Dataset_aden <- readRDS("Filtered_Dataset_aden.rds")#Per area, tracts from 25 cities, (Sq. Miles)
+Filtered_Dataset_den2 <- readRDS("Filtered_Dataset_den2.rds")#Per capita, all census tracts, (1000 people)
+Filtered_Dataset_aden2 <- readRDS("Filtered_Dataset_aden2.rds")#Per area, all census tracts, (Sq. Miles)
+all_tracts <- readRDS("all_tracts.rds")#'ALAND' from 'all_tracts' reflects the land-area in square meters
 #--------------------------------------------------------------Summary Stats---------------------------------------------------------------------------------------------------------------------------------------------
 
 #Evaluating the Variability per Type of Infrastructure--------------------------
@@ -40,22 +44,69 @@ stats_aden= Filtered_Dataset_aden %>%
   summarise(
     mean_Infra_Den = mean(Infrastructure_Density, na.rm = TRUE),
     sd_Infra_Den = sd(Infrastructure_Density, na.rm = TRUE),
+    Var_Coef_Infra=sd(Infrastructure_Density, na.rm = TRUE)/mean(Infrastructure_Density, na.rm = TRUE),
     mean_RISK_VALUE = mean(RISK_VALUE, na.rm = TRUE),
-    sd_RISK_VALUE = sd(RISK_VALUE, na.rm = TRUE)
+    sd_RISK_VALUE = sd(RISK_VALUE, na.rm = TRUE),
+    Var_Coef_RISK=sd(RISK_VALUE, na.rm = TRUE)/mean(RISK_VALUE, na.rm = TRUE)
   )
 
+#--------------------------------------------------------Examining the Effects of Geography---------------------------------------------------------------------------------------------------------------------------------------------
+#replace NA values with zero in columns col1 and col2
+Temp=Filtered_Dataset_aden[Filtered_Dataset_aden$Infrastructure_Density !=0,]
+Temp2=Filtered_Dataset_aden[Filtered_Dataset_aden$RISK_VALUE !=0,]
 
-#-----------Analyzing via Density per Capita---------------------------------------------------------------------------------------------------------------
-Linear_Model1 = Filtered_Dataset_den %>% filter(den_type=='den_museums') %>% summarize(lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
-Linear_Model2 = Filtered_Dataset_den %>% filter(den_type=='den_theatricalproductions') %>% summarize(lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
-Linear_Model3 = Filtered_Dataset_den %>% filter(den_type=='den_amusementparks') %>% summarize(lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
-Linear_Model4 = Filtered_Dataset_den %>% filter(den_type=='den_movietheaters') %>% summarize(lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
-Linear_Model5 = Filtered_Dataset_den %>% filter(den_type=='den_zoosaquariumsgardens') %>% summarize(lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
-Linear_Model6 = Filtered_Dataset_den %>% filter(den_type=='den_bingocardsgambling') %>% summarize(lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
-Linear_Model7 = Filtered_Dataset_den %>% filter(den_type=='den_poolhallsbowlingalleys') %>% summarize(lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
-Linear_Model8 = Filtered_Dataset_den %>% filter(den_type=='den_hotels') %>% summarize(lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
-Linear_Model9 = Filtered_Dataset_den %>% filter(den_type=='den_casinohotels') %>% summarize(lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
-Linear_Model10 = Filtered_Dataset_den %>% filter(den_type=='den_totartsentertainment') %>% summarize(lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+stats_coef <-
+  Filtered_Dataset_aden %>%
+  group_by(den_type) %>% 
+  summarise(#Calculating the Coefficient of Variation
+    min_Var_Coef_Infra=sd(Infrastructure_Density, na.rm = TRUE)/max(Infrastructure_Density, na.rm = TRUE),
+    avg_Var_Coef_Infra=sd(Infrastructure_Density, na.rm = TRUE)/mean(Infrastructure_Density, na.rm = TRUE),
+    max_Var_Coef_Infra=sd(Infrastructure_Density, na.rm = TRUE)/min(Temp$Infrastructure_Density, na.rm = TRUE),
+    min_Var_Coef_RISK=sd(RISK_VALUE, na.rm = TRUE)/max(RISK_VALUE, na.rm = TRUE),
+    avg_Var_Coef_RISK=sd(RISK_VALUE, na.rm = TRUE)/mean(RISK_VALUE, na.rm = TRUE),
+    max_Var_Coef_RISK=sd(RISK_VALUE, na.rm = TRUE)/min(Temp2$RISK_VALUE, na.rm = TRUE)
+  )
+stats_coef <- stats_coef %>% mutate(avg_Var_Coef_Infra = ifelse(is.na(avg_Var_Coef_Infra), 0, avg_Var_Coef_Infra),
+                                    avg_Var_Coef_RISK = ifelse(is.na(avg_Var_Coef_RISK), 0, avg_Var_Coef_RISK))
+stats_coef <-
+  Filtered_Dataset_aden %>%
+  group_by(city) %>% 
+  summarise(#Calculating the Coefficient of Variation
+    min_Var_Coef_RISK=sd(RISK_VALUE, na.rm = TRUE)/max(RISK_VALUE, na.rm = TRUE),
+    avg_Var_Coef_RISK=sd(RISK_VALUE, na.rm = TRUE)/mean(RISK_VALUE, na.rm = TRUE),
+    max_Var_Coef_RISK=sd(RISK_VALUE, na.rm = TRUE)/min(Temp2$RISK_VALUE, na.rm = TRUE)
+  )
+stats_coef <- stats_coef %>% mutate(avg_Var_Coef_RISK = ifelse(is.na(avg_Var_Coef_RISK), 0, avg_Var_Coef_RISK))
+
+#Determining the Area (in sq. mi) of each of the 25 cities
+options(tigris_class = "sf")
+places <- places(state = unique(Filtered_Dataset_aden$STATE))
+cities <- places %>% filter(NAME %in% c("New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio", 
+                                        "San Diego", "Dallas", "San Jose", "Austin", "Jacksonville", "Fort Worth", "Columbus", 
+                                        "Indianapolis city (balance)", "Charlotte", "San Francisco", "Seattle", "Denver", "Washington", 
+                                        "Nashville", "Oklahoma City", "El Paso", "Boston", "Portland"))
+cities <- cities %>%
+  mutate(area_mi2 = set_units(st_area(.), mi^2) %>% as.numeric())
+cities=cities %>% select(NAME,area_mi2)
+cities <- cities %>%
+  group_by(NAME) %>%
+  summarise(total_area = sum(area_mi2, na.rm = TRUE))
+
+
+stats_coef=stats_coef %>% mutate(min_Adjusted=min_Var_Coef_RISK/cities$total_area,Avg_Adjusted=avg_Var_Coef_RISK/cities$total_area,max_Adjusted=max_Var_Coef_RISK/cities$total_area)
+
+
+#-----------Analyzing Density per Capita (25 cities)---------------------------------------------------------------------------------------------------------------
+Linear_Model1 = Filtered_Dataset_den %>% filter(den_type=='den_museums') %>% summarize(lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model2 = Filtered_Dataset_den %>% filter(den_type=='den_theatricalproductions') %>% summarize(lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model3 = Filtered_Dataset_den %>% filter(den_type=='den_amusementparks') %>% summarize(lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model4 = Filtered_Dataset_den %>% filter(den_type=='den_movietheaters') %>% summarize(lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model5 = Filtered_Dataset_den %>% filter(den_type=='den_zoosaquariumsgardens') %>% summarize(lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model6 = Filtered_Dataset_den %>% filter(den_type=='den_bingocardsgambling') %>% summarize(lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model7 = Filtered_Dataset_den %>% filter(den_type=='den_poolhallsbowlingalleys') %>% summarize(lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model8 = Filtered_Dataset_den %>% filter(den_type=='den_hotels') %>% summarize(lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model9 = Filtered_Dataset_den %>% filter(den_type=='den_casinohotels') %>% summarize(lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model10 = Filtered_Dataset_den %>% filter(den_type=='den_totartsentertainment') %>% summarize(lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
 Linear_Model_Capita=bind_rows(Linear_Model1,Linear_Model2,Linear_Model3,Linear_Model4,Linear_Model5,Linear_Model6,Linear_Model7,Linear_Model8,Linear_Model9,Linear_Model10)
 remove(Linear_Model1,Linear_Model2,Linear_Model3,Linear_Model4,Linear_Model5,Linear_Model6,Linear_Model7,Linear_Model8,Linear_Model9,Linear_Model10)
 
@@ -73,55 +124,112 @@ Full_Capita <- full_join(Filtered_Dataset_den,Linear_Model_Capita, by = "den_typ
 
 
 
-r21=Filtered_Dataset_den %>% filter(den_type=='den_museums') %>% lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
+r21=Filtered_Dataset_den %>% filter(den_type=='den_museums') %>% lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
 r21=summary(r21)[["r.squared"]]
-r22=Filtered_Dataset_den %>% filter(den_type=='den_theatricalproductions') %>% lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
+r22=Filtered_Dataset_den %>% filter(den_type=='den_theatricalproductions') %>% lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
 r22=summary(r22)[["r.squared"]]
-r23=Filtered_Dataset_den %>% filter(den_type=='den_amusementparks') %>% lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
+r23=Filtered_Dataset_den %>% filter(den_type=='den_amusementparks') %>% lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
 r23=summary(r23)[["r.squared"]]
-r24=Filtered_Dataset_den %>% filter(den_type=='den_movietheaters') %>% lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
+r24=Filtered_Dataset_den %>% filter(den_type=='den_movietheaters') %>% lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
 r24=summary(r24)[["r.squared"]]
-r25=Filtered_Dataset_den %>% filter(den_type=='den_zoosaquariumsgardens') %>% lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
+r25=Filtered_Dataset_den %>% filter(den_type=='den_zoosaquariumsgardens') %>% lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
 r25=summary(r25)[["r.squared"]]
-r26=Filtered_Dataset_den %>% filter(den_type=='den_bingocardsgambling') %>% lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
+r26=Filtered_Dataset_den %>% filter(den_type=='den_bingocardsgambling') %>% lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
 r26=summary(r26)[["r.squared"]]
-r27=Filtered_Dataset_den %>% filter(den_type=='den_poolhallsbowlingalleys') %>% lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
+r27=Filtered_Dataset_den %>% filter(den_type=='den_poolhallsbowlingalleys') %>% lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
 r27=summary(r27)[["r.squared"]]
-r28=Filtered_Dataset_den %>% filter(den_type=='den_hotels') %>% lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
+r28=Filtered_Dataset_den %>% filter(den_type=='den_hotels') %>% lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
 r28=summary(r28)[["r.squared"]]
-r29=Filtered_Dataset_den %>% filter(den_type=='den_casinohotels') %>% lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
+r29=Filtered_Dataset_den %>% filter(den_type=='den_casinohotels') %>% lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
 r29=summary(r29)[["r.squared"]]
-r210=Filtered_Dataset_den %>% filter(den_type=='den_totartsentertainment') %>% lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
+r210=Filtered_Dataset_den %>% filter(den_type=='den_totartsentertainment') %>% lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
 r210=summary(r210)[["r.squared"]]
 AllRSquared=c(r21,r22,r23,r24,r25,r26,r27,r28,r29,r210)
 remove(r21,r22,r23,r24,r25,r26,r27,r28,r29,r210)
 hist(AllRSquared)
 
+#------Reference Code------
+#Filtered_Dataset_den2=Combined_Dataset %>% 
+#  select(year,RISK_VALUE,SOVI_SCORE,EAL_VALB,POPULATION, STATE, COUNTY, STCOFIPS, TRACTFIPS, 
+#         ,den_museums,den_theatricalproductions, den_amusementparks,den_movietheaters,den_zoosaquariumsgardens,den_bingocardsgambling,den_poolhallsbowlingalleys,den_totartsentertainment,den_hotels,den_casinohotels) %>% 
+#  pivot_longer(cols=c(den_museums,den_theatricalproductions, den_amusementparks,den_movietheaters,den_zoosaquariumsgardens,den_bingocardsgambling,den_poolhallsbowlingalleys,den_totartsentertainment,den_hotels,den_casinohotels),names_to="den_type",values_to="Infrastructure_Density")
+
+#Filtering down to Cities of Interest-------------------------------------------------------------
+#Filtered_Dataset_den <- inner_join(Filtered_Dataset_den2,all_tracts, by = "TRACTFIPS")
+#Filtered_Dataset_den= Filtered_Dataset_den %>% select(den_type,RISK_VALUE, Infrastructure_Density,POPULATION)
+
+#Filtering out to just the latest census, since NRI does not have year-over-year datapoints
+#Filtered_Dataset_den2 = Filtered_Dataset_den2 %>% filter(year==2020)
+#Filtered_Dataset_den2= Filtered_Dataset_den2 %>% select(den_type,RISK_VALUE, Infrastructure_Density,POPULATION)
+
+#-----------Analyzing Density per Capita (all census tracts)---------------------------------------------------------------------------------------------------------------
+
+Linear_Model1 = Filtered_Dataset_den2 %>% filter(den_type=='den_museums') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model2 = Filtered_Dataset_den2 %>% filter(den_type=='den_theatricalproductions') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model3 = Filtered_Dataset_den2 %>% filter(den_type=='den_amusementparks') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model4 = Filtered_Dataset_den2 %>% filter(den_type=='den_movietheaters') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model5 = Filtered_Dataset_den2 %>% filter(den_type=='den_zoosaquariumsgardens') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model6 = Filtered_Dataset_den2 %>% filter(den_type=='den_bingocardsgambling') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model7 = Filtered_Dataset_den2 %>% filter(den_type=='den_poolhallsbowlingalleys') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model8 = Filtered_Dataset_den2 %>% filter(den_type=='den_hotels') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model9 = Filtered_Dataset_den2 %>% filter(den_type=='den_casinohotels') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model10 = Filtered_Dataset_den2 %>% filter(den_type=='den_totartsentertainment') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model_Capita2=bind_rows(Linear_Model1,Linear_Model2,Linear_Model3,Linear_Model4,Linear_Model5,Linear_Model6,Linear_Model7,Linear_Model8,Linear_Model9,Linear_Model10)
+remove(Linear_Model1,Linear_Model2,Linear_Model3,Linear_Model4,Linear_Model5,Linear_Model6,Linear_Model7,Linear_Model8,Linear_Model9,Linear_Model10)
+Linear_Model_Capita2= Linear_Model_Capita2 %>% filter(term != "(Intercept)")
+Linear_Model_Capita2= Linear_Model_Capita2 %>% filter(term != "POPULATION")
+
+Linear_Model_Capita2= Linear_Model_Capita2 %>% mutate(den_type=c('den_museums','den_theatricalproductions','den_amusementparks','den_movietheaters','den_zoosaquariumsgardens','den_bingocardsgambling','den_poolhallsbowlingalleys','den_hotels','den_casinohotels','den_totartsentertainment'))
+Full_Capita2 <- full_join(Filtered_Dataset_den2,Linear_Model_Capita2, by = "den_type")
+
 
 
 #--------------------------------------------------------------Section-END------------------------------------------------------------------------------------------------------------------------------------
-#--------------------------------------------------------------Analyzing via Density per Unit Area------------------------------------------------------------------------------------------------------------
 
-#Filtered_Dataset_aden=Combined_Dataset %>% 
-#  select(year,RISK_VALUE,SOVI_SCORE,EAL_VALB,POPULATION, STATE, COUNTY, STCOFIPS, TRACTFIPS, 
-#         ,aden_museums,aden_theatricalproductions, aden_amusementparks,aden_movietheaters,aden_zoosaquariumsgardens,aden_bingocardsgambling,aden_poolhallsbowlingalleys,aden_totartsentertainment,aden_hotels,aden_casinohotels) %>% 
-#  pivot_longer(cols=c(aden_museums,aden_theatricalproductions, aden_amusementparks,aden_movietheaters,aden_zoosaquariumsgardens,aden_bingocardsgambling,aden_poolhallsbowlingalleys,aden_totartsentertainment,aden_hotels,aden_casinohotels),names_to="den_type",values_to="Infrastructure_Density")
+#------Reference Code------
+#Filtered_Dataset_aden2=Combined_Dataset %>% 
+# select(year,RISK_VALUE,SOVI_SCORE,EAL_VALB,POPULATION, STATE, COUNTY, STCOFIPS, TRACTFIPS, 
+#      ,aden_museums,aden_theatricalproductions, aden_amusementparks,aden_movietheaters,aden_zoosaquariumsgardens,aden_bingocardsgambling,aden_poolhallsbowlingalleys,aden_totartsentertainment,aden_hotels,aden_casinohotels) %>% 
+#pivot_longer(cols=c(aden_museums,aden_theatricalproductions, aden_amusementparks,aden_movietheaters,aden_zoosaquariumsgardens,aden_bingocardsgambling,aden_poolhallsbowlingalleys,aden_totartsentertainment,aden_hotels,aden_casinohotels),names_to="den_type",values_to="Infrastructure_Density")
 
 #Filtering down to Cities of Interest-------------------------------------------------------------
 #Filtered_Dataset_aden <- inner_join(Filtered_Dataset_aden,all_tracts, by = "TRACTFIPS")
 #Filtering out to just the latest census, since NRI does not have year-over-year datapoints
-#Filtered_Dataset_aden = Filtered_Dataset_aden %>% filter(year==2020)
+#Filtered_Dataset_aden2 = Filtered_Dataset_aden2 %>% filter(year==2020)
 
-Linear_Model1 = Filtered_Dataset_aden %>% filter(den_type=='aden_museums') %>% summarize(lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
-Linear_Model2 = Filtered_Dataset_aden %>% filter(den_type=='aden_theatricalproductions') %>% summarize(lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
-Linear_Model3 = Filtered_Dataset_aden %>% filter(den_type=='aden_amusementparks') %>% summarize(lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
-Linear_Model4 = Filtered_Dataset_aden %>% filter(den_type=='aden_movietheaters') %>% summarize(lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
-Linear_Model5 = Filtered_Dataset_aden %>% filter(den_type=='aden_zoosaquariumsgardens') %>% summarize(lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
-Linear_Model6 = Filtered_Dataset_aden %>% filter(den_type=='aden_bingocardsgambling') %>% summarize(lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
-Linear_Model7 = Filtered_Dataset_aden %>% filter(den_type=='aden_poolhallsbowlingalleys') %>% summarize(lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
-Linear_Model8 = Filtered_Dataset_aden %>% filter(den_type=='aden_hotels') %>% summarize(lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
-Linear_Model9 = Filtered_Dataset_aden %>% filter(den_type=='aden_casinohotels') %>% summarize(lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
-Linear_Model10 = Filtered_Dataset_aden %>% filter(den_type=='aden_totartsentertainment') %>% summarize(lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+#Filtered_Dataset_aden2= Filtered_Dataset_aden2 %>% select(den_type,RISK_VALUE, Infrastructure_Density,POPULATION)
+
+#--------------------------------------------------------------Analyzing via Density per Unit Area (all census tracts)------------------------------------------------------------------------------------------------------------
+
+Linear_Model1 = Filtered_Dataset_aden2 %>% filter(den_type=='aden_museums') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model2 = Filtered_Dataset_aden2 %>% filter(den_type=='aden_theatricalproductions') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model3 = Filtered_Dataset_aden2 %>% filter(den_type=='aden_amusementparks') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model4 = Filtered_Dataset_aden2 %>% filter(den_type=='aden_movietheaters') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model5 = Filtered_Dataset_aden2 %>% filter(den_type=='aden_zoosaquariumsgardens') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model6 = Filtered_Dataset_aden2 %>% filter(den_type=='aden_bingocardsgambling') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model7 = Filtered_Dataset_aden2 %>% filter(den_type=='aden_poolhallsbowlingalleys') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model8 = Filtered_Dataset_aden2 %>% filter(den_type=='aden_hotels') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model9 = Filtered_Dataset_aden2 %>% filter(den_type=='aden_casinohotels') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model10 = Filtered_Dataset_aden2 %>% filter(den_type=='aden_totartsentertainment') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model_Area2=bind_rows(Linear_Model1,Linear_Model2,Linear_Model3,Linear_Model4,Linear_Model5,Linear_Model6,Linear_Model7,Linear_Model8,Linear_Model9,Linear_Model10)
+remove(Linear_Model1,Linear_Model2,Linear_Model3,Linear_Model4,Linear_Model5,Linear_Model6,Linear_Model7,Linear_Model8,Linear_Model9,Linear_Model10)
+Linear_Model_Area2= Linear_Model_Area2 %>% filter(term != "(Intercept)")
+Linear_Model_Area2= Linear_Model_Area2 %>% filter(term != "POPULATION")
+
+Linear_Model_Area2= Linear_Model_Area2 %>% mutate(den_type=c('aden_museums','aden_theatricalproductions','aden_amusementparks','aden_movietheaters','aden_zoosaquariumsgardens','aden_bingocardsgambling','aden_poolhallsbowlingalleys','aden_hotels','aden_casinohotels','aden_totartsentertainment'))
+Full_Area2 <- full_join(Filtered_Dataset_aden2,Linear_Model_Area2, by = "den_type")
+
+#--------------------------------------------------------------Analyzing via Density per Unit Area (25 cities)------------------------------------------------------------------------------------------------------------
+Linear_Model1 = Filtered_Dataset_aden %>% filter(den_type=='aden_museums') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model2 = Filtered_Dataset_aden %>% filter(den_type=='aden_theatricalproductions') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model3 = Filtered_Dataset_aden %>% filter(den_type=='aden_amusementparks') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model4 = Filtered_Dataset_aden %>% filter(den_type=='aden_movietheaters') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model5 = Filtered_Dataset_aden %>% filter(den_type=='aden_zoosaquariumsgardens') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model6 = Filtered_Dataset_aden %>% filter(den_type=='aden_bingocardsgambling') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model7 = Filtered_Dataset_aden %>% filter(den_type=='aden_poolhallsbowlingalleys') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model8 = Filtered_Dataset_aden %>% filter(den_type=='aden_hotels') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model9 = Filtered_Dataset_aden %>% filter(den_type=='aden_casinohotels') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
+Linear_Model10 = Filtered_Dataset_aden %>% filter(den_type=='aden_totartsentertainment') %>% summarize(lm(formula= RISK_VALUE ~ Infrastructure_Density + POPULATION, data=. ) %>% broom::tidy())
 Linear_Model_Area=bind_rows(Linear_Model1,Linear_Model2,Linear_Model3,Linear_Model4,Linear_Model5,Linear_Model6,Linear_Model7,Linear_Model8,Linear_Model9,Linear_Model10)
 remove(Linear_Model1,Linear_Model2,Linear_Model3,Linear_Model4,Linear_Model5,Linear_Model6,Linear_Model7,Linear_Model8,Linear_Model9,Linear_Model10)
 
@@ -137,33 +245,40 @@ Full_Area <- full_join(Filtered_Dataset_aden,Linear_Model_Area, by = "den_type")
 hist((Linear_Model_Area$estimate))
 
 
-r21=Filtered_Dataset_aden %>% filter(den_type=='aden_museums') %>% lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
+r21=Filtered_Dataset_aden %>% filter(den_type=='aden_museums') %>% lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
 r21=summary(r21)[["r.squared"]]
-r22=Filtered_Dataset_aden %>% filter(den_type=='aden_theatricalproductions') %>% lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
+r22=Filtered_Dataset_aden %>% filter(den_type=='aden_theatricalproductions') %>% lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
 r22=summary(r22)[["r.squared"]]
-r23=Filtered_Dataset_aden %>% filter(den_type=='aden_amusementparks') %>% lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
+r23=Filtered_Dataset_aden %>% filter(den_type=='aden_amusementparks') %>% lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
 r23=summary(r23)[["r.squared"]]
-r24=Filtered_Dataset_aden %>% filter(den_type=='aden_movietheaters') %>% lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
+r24=Filtered_Dataset_aden %>% filter(den_type=='aden_movietheaters') %>% lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
 r24=summary(r24)[["r.squared"]]
-r25=Filtered_Dataset_aden %>% filter(den_type=='aden_zoosaquariumsgardens') %>% lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
+r25=Filtered_Dataset_aden %>% filter(den_type=='aden_zoosaquariumsgardens') %>% lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
 r25=summary(r25)[["r.squared"]]
-r26=Filtered_Dataset_aden %>% filter(den_type=='aden_bingocardsgambling') %>% lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
+r26=Filtered_Dataset_aden %>% filter(den_type=='aden_bingocardsgambling') %>% lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
 r26=summary(r26)[["r.squared"]]
-r27=Filtered_Dataset_aden %>% filter(den_type=='aden_poolhallsbowlingalleys') %>% lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
+r27=Filtered_Dataset_aden %>% filter(den_type=='aden_poolhallsbowlingalleys') %>% lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
 r27=summary(r27)[["r.squared"]]
-r28=Filtered_Dataset_aden %>% filter(den_type=='aden_hotels') %>% lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
+r28=Filtered_Dataset_aden %>% filter(den_type=='aden_hotels') %>% lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
 r28=summary(r28)[["r.squared"]]
-r29=Filtered_Dataset_aden %>% filter(den_type=='aden_casinohotels') %>% lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
+r29=Filtered_Dataset_aden %>% filter(den_type=='aden_casinohotels') %>% lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
 r29=summary(r29)[["r.squared"]]
-r210=Filtered_Dataset_aden %>% filter(den_type=='aden_totartsentertainment') %>% lm(formula= log(RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
+r210=Filtered_Dataset_aden %>% filter(den_type=='aden_totartsentertainment') %>% lm(formula= (RISK_VALUE) ~ Infrastructure_Density + POPULATION, data=. )
 r210=summary(r210)[["r.squared"]]
 AllRSquared_Area=c(r21,r22,r23,r24,r25,r26,r27,r28,r29,r210)
 remove(r21,r22,r23,r24,r25,r26,r27,r28,r29,r210)
 hist(AllRSquared_Area)
 
 
+#--------------------------------------------------------------Plotting Results!------------------------------------------------------------------------------------------------------------
+
 # Scatterplot of Betas vs. Infrastructure Density per Sq. Mile
 ggplot(Full_Area, aes(x = estimate, y = Infrastructure_Density)) +
+  geom_point(color = "blue", size = 3) +  # Custom point color and size
+  labs(title = "Betas vs. Infrastructure Density per Sq. Mile", x = "Beta Coeff.", y = "Infrastructure Density per Sq. Mile")  # Titles and labels
+
+# Scatterplot of Betas vs. Infrastructure Density per Sq. Mile
+ggplot(Full_Area2, aes(x = estimate, y = Infrastructure_Density)) +
   geom_point(color = "blue", size = 3) +  # Custom point color and size
   labs(title = "Betas vs. Infrastructure Density per Sq. Mile", x = "Beta Coeff.", y = "Infrastructure Density per Sq. Mile")  # Titles and labels
 
@@ -173,6 +288,11 @@ ggplot(Full_Area, aes(x = estimate, y = Infrastructure_Density)) +
 
 # Scatterplot of Betas vs. Infrastructure Density per 1000 People
 ggplot(Full_Capita, aes(x = estimate, y = Infrastructure_Density)) +
+  geom_point(color = "blue", size = 3) +  # Custom point color and size
+  labs(title = "Betas vs. Infrastructure Density per 1000 People", x = "Beta Coeff.", y = "Infrastructure Density per 1000 People")  # Titles and labels
+
+# Scatterplot of Betas vs. Infrastructure Density per 1000 People
+ggplot(Full_Capita2, aes(x = estimate, y = Infrastructure_Density)) +
   geom_point(color = "blue", size = 3) +  # Custom point color and size
   labs(title = "Betas vs. Infrastructure Density per 1000 People", x = "Beta Coeff.", y = "Infrastructure Density per 1000 People")  # Titles and labels
 
