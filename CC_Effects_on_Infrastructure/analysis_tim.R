@@ -7,6 +7,8 @@ library(stringr)
 library(tidyverse)
 library(readr)
 library(dplyr)
+library(rsm) # for RSM
+library(metR) # for contour plot labels in ggplot
 
 setwd(paste0(rstudioapi::getActiveProject(), "/CC_Effects_on_Infrastructure"))
 
@@ -56,9 +58,9 @@ data1 %>%
     y =   data %>%
       group_by(year, city, geoid) %>%
       summarize(any = sum(count, na.rm = TRUE) > 0)
-  ) %>%
+  ) #%>%
 
-  saveRDS("data.rds")
+ # saveRDS("data.rds")
 
 
   # aden and count
@@ -217,25 +219,54 @@ get_estimates = function(data, x = 1, pden = 0.50, ppop = 0.50, parea = 0.50, pc
       lower = quantile(diff, prob = alpha / 2),
       upper = quantile(diff, prob = ci + alpha/2), .groups = "drop"
     ) %>%
-    mutate(x = x)
+    mutate(x = x,pcrf=pcrf,pden=pden,ppop=ppop,parea=parea,bound_range=upper-lower)
   return(stat)
 }
 
 
-get_estimates(data = data, x = 10, pden = 0.50, ppop = 0.50, parea = 0.50, pcrf = 0.50, ci = 0.95)
-get_estimates(data = data, x = 10, pden = 0.50, ppop = 0.50, parea = 0.50, pcrf = 0.25, ci = 0.95)
-get_estimates(data = data, x = 10, pden = 0.50, ppop = 0.50, parea = 0.50, pcrf = 0.75, ci = 0.95)
+#get_estimates(data = data, x = 10, pden = 0.50, ppop = 0.50, parea = 0.50, pcrf = 0.50, ci = 0.95)
+#get_estimates(data = data, x = 10, pden = 0.50, ppop = 0.50, parea = 0.50, pcrf = 0.25, ci = 0.95)
+#get_estimates(data = data, x = 10, pden = 0.50, ppop = 0.50, parea = 0.50, pcrf = 0.75, ci = 0.95)
 
-
-points = bind_rows(
-  get_estimates(data = data, x = 1, pden = 0.50, ppop = 0.50, parea = 0.50, pcrf = 0.50, ci = 0.95),
-  get_estimates(data = data, x = 5, pden = 0.50, ppop = 0.50, parea = 0.50, pcrf = 0.50, ci = 0.95),
-  get_estimates(data = data, x = 10, pden = 0.50, ppop = 0.50, parea = 0.50, pcrf = 0.50, ci = 0.95),
-  get_estimates(data = data, x = 50, pden = 0.50, ppop = 0.50, parea = 0.50, pcrf = 0.50, ci = 0.95)
-) %>%
+#Adding additional sites
+points_x = bind_rows(
+  lapply(1:50, function(i) {
+    get_estimates(data = data, x = i, pden = 0.50, ppop = 0.50, parea = 0.50, pcrf = 0.50, ci = 0.95)
+  })) %>%
   mutate(group = paste0(type, "-", x)) %>%
   arrange(desc(type), x)
 
+#Increasing the count
+points_den = bind_rows(
+  lapply(seq(0.1, 0.95, by = 0.05), function(i) {
+    get_estimates(data = data, x = 10, pden = i, ppop = 0.50, parea = 0.50, pcrf = 0.50, ci = 0.95)
+  })) %>%
+  mutate(group = paste0(type, "-", x)) %>%
+  arrange(desc(type), x)
+
+#Increasing the population
+points_pop = bind_rows(
+  lapply(seq(0.1, 0.95, by = 0.05), function(i) {
+    get_estimates(data = data, x = 10, pden = 0.5, ppop = i, parea = 0.50, pcrf = 0.50, ci = 0.95)
+  })) %>%
+  mutate(group = paste0(type, "-", x)) %>%
+  arrange(desc(type), x)
+
+#Increasing the density per sq. mile
+points_area = bind_rows(
+  lapply(seq(0.1, 0.95, by = 0.05), function(i) {
+    get_estimates(data = data, x = 10, pden = 0.50, ppop = 0.50, parea = i, pcrf = 0.50, ci = 0.95)
+  })) %>%
+  mutate(group = paste0(type, "-", x)) %>%
+  arrange(desc(type), x)
+
+#Increasing the CRF
+points_crf = bind_rows(
+  lapply(seq(0.1, 0.95, by = 0.05), function(i) {
+    get_estimates(data = data, x = 10, pden = 0.50, ppop = 0.50, parea = 0.50, pcrf = i, ci = 0.95)
+  })) %>%
+  mutate(group = paste0(type, "-", x)) %>%
+  arrange(desc(type), x)
 
 # Plan:
 
@@ -257,10 +288,126 @@ points = bind_rows(
 
 
 # Ribbon Plots (as you change 1 variable, what happens?)
+#Note x=number of additional social infrastructure sites
+#     pden corresponds to number of sites
+#     ppop corresponds to per capita
+#     parea corresponds to size of the region
+#     pcrf corresponds to magnitude of the community risk factor
+
 
 # Ribbon Plots with multiple ribbons (as change 1 variable at level A, at level B, etc.) what happens?
+ggplot() +
+  geom_ribbon(data = points_x %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens", alpha = 0.5))+
+  geom_ribbon(data = points_x %>% filter(type=='theatricalproductions'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "theatricalproductions", alpha = 0.5))+
+  geom_ribbon(data = points_x %>% filter(type=='poolhallsbowlingalleys'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "poolhallsbowlingalleys", alpha = 0.5))+
+  geom_ribbon(data = points_x %>% filter(type=='museums'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "museums", alpha = 0.5))+
+  geom_ribbon(data = points_x %>% filter(type=='movietheaters'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "movietheaters", alpha = 0.5))+
+  geom_ribbon(data = points_x %>% filter(type=='hotels'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "hotels", alpha = 0.5))+
+  geom_ribbon(data = points_x %>% filter(type=='casinohotels'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "casinohotels", alpha = 0.5))+
+  geom_ribbon(data = points_x %>% filter(type=='bingocardsgambling'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "bingocardsgambling", alpha = 0.5))+
+  geom_ribbon(data = points_x %>% filter(type=='amusementparks'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "amusementparks", alpha = 0.5))+
+  geom_ribbon(data = points_x %>% filter(type=='totartsentertainment'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "totartsentertainment", alpha = 0.5))+
+  labs(title="The Effect of Adding Additional Social Infrastructure Sites",x="Sites Added",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")
+
+ggplot() +
+  geom_ribbon(data = points_den %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens", alpha = 0.5))+
+  geom_ribbon(data = points_den %>% filter(type=='theatricalproductions'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "theatricalproductions", alpha = 0.5))+
+  geom_ribbon(data = points_den %>% filter(type=='poolhallsbowlingalleys'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "poolhallsbowlingalleys", alpha = 0.5))+
+  geom_ribbon(data = points_den %>% filter(type=='museums'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "museums", alpha = 0.5))+
+  geom_ribbon(data = points_den %>% filter(type=='movietheaters'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "movietheaters", alpha = 0.5))+
+  geom_ribbon(data = points_den %>% filter(type=='hotels'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "hotels", alpha = 0.5))+
+  geom_ribbon(data = points_den %>% filter(type=='casinohotels'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "casinohotels", alpha = 0.5))+
+  geom_ribbon(data = points_den %>% filter(type=='bingocardsgambling'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "bingocardsgambling", alpha = 0.5))+
+  geom_ribbon(data = points_den %>% filter(type=='amusementparks'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "amusementparks", alpha = 0.5))+
+  geom_ribbon(data = points_den %>% filter(type=='totartsentertainment'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "totartsentertainment", alpha = 0.5))+
+  labs(title="The Effect of Increasing Social Infrastructure Density",x="Quantile of Social Infrastructure Density",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")
+
+ggplot() +
+  geom_ribbon(data = points_pop %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens", alpha = 0.5))+
+  geom_ribbon(data = points_pop %>% filter(type=='theatricalproductions'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "theatricalproductions", alpha = 0.5))+
+  geom_ribbon(data = points_pop %>% filter(type=='poolhallsbowlingalleys'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "poolhallsbowlingalleys", alpha = 0.5))+
+  geom_ribbon(data = points_pop %>% filter(type=='museums'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "museums", alpha = 0.5))+
+  geom_ribbon(data = points_pop %>% filter(type=='movietheaters'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "movietheaters", alpha = 0.5))+
+  geom_ribbon(data = points_pop %>% filter(type=='hotels'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "hotels", alpha = 0.5))+
+  geom_ribbon(data = points_pop %>% filter(type=='casinohotels'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "casinohotels", alpha = 0.5))+
+  geom_ribbon(data = points_pop %>% filter(type=='bingocardsgambling'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "bingocardsgambling", alpha = 0.5))+
+  geom_ribbon(data = points_pop %>% filter(type=='amusementparks'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "amusementparks", alpha = 0.5))+
+  geom_ribbon(data = points_pop %>% filter(type=='totartsentertainment'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "totartsentertainment", alpha = 0.5))+
+  labs(title="The Effect on Larger Population Census Tracts",x="Quantile of the Population",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")
+
+ggplot() +
+  geom_ribbon(data = points_area %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens", alpha = 0.5))+
+  geom_ribbon(data = points_area %>% filter(type=='theatricalproductions'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "theatricalproductions", alpha = 0.5))+
+  geom_ribbon(data = points_area %>% filter(type=='poolhallsbowlingalleys'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "poolhallsbowlingalleys", alpha = 0.5))+
+  geom_ribbon(data = points_area %>% filter(type=='museums'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "museums", alpha = 0.5))+
+  geom_ribbon(data = points_area %>% filter(type=='movietheaters'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "movietheaters", alpha = 0.5))+
+  geom_ribbon(data = points_area %>% filter(type=='hotels'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "hotels", alpha = 0.5))+
+  geom_ribbon(data = points_area %>% filter(type=='casinohotels'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "casinohotels", alpha = 0.5))+
+  geom_ribbon(data = points_area %>% filter(type=='bingocardsgambling'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "bingocardsgambling", alpha = 0.5))+
+  geom_ribbon(data = points_area %>% filter(type=='amusementparks'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "amusementparks", alpha = 0.5))+
+  geom_ribbon(data = points_area %>% filter(type=='totartsentertainment'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "totartsentertainment", alpha = 0.5))+
+  labs(title="The Effect on Larger Area Census Tracts",x="Quantile of the Area (sq.mi)",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")
+
+
+ggplot() +
+  geom_ribbon(data = points_crf %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens", alpha = 0.5))+
+  geom_ribbon(data = points_crf %>% filter(type=='theatricalproductions'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "theatricalproductions", alpha = 0.5))+
+  geom_ribbon(data = points_crf %>% filter(type=='poolhallsbowlingalleys'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "poolhallsbowlingalleys", alpha = 0.5))+
+  geom_ribbon(data = points_crf %>% filter(type=='museums'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "museums", alpha = 0.5))+
+  geom_ribbon(data = points_crf %>% filter(type=='movietheaters'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "movietheaters", alpha = 0.5))+
+  geom_ribbon(data = points_crf %>% filter(type=='hotels'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "hotels", alpha = 0.5))+
+  geom_ribbon(data = points_crf %>% filter(type=='casinohotels'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "casinohotels", alpha = 0.5))+
+  geom_ribbon(data = points_crf %>% filter(type=='bingocardsgambling'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "bingocardsgambling", alpha = 0.5))+
+  geom_ribbon(data = points_crf %>% filter(type=='amusementparks'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "amusementparks", alpha = 0.5))+
+  geom_ribbon(data = points_crf %>% filter(type=='totartsentertainment'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "totartsentertainment", alpha = 0.5))+
+  labs(title="The Effect of Increasing Community Risk Factor",x="Quantile of the Community Risk Factor",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")
+
+
 
 # RSM - tile plots
+
+get_estimates_rsm = function(data, x = 1, pden = 0.50, ppop = 0.50, parea = 0.50, pcrf = 0.50, ci = 0.95){
+  
+  alpha = 1 - ci
+  # Let's see the impacts...
+  stat = data %>%
+    #First lets filter to census tracts that are not empty (i.e., they have at least 1 building of some kind of social infrastructure in them)
+    filter(any > 0) %>% 
+    group_by(category, type) %>%
+    reframe(
+      # RISK ~ COUNT + POPULATION + AREA
+      {
+        m = rsm(formula = log(eal / pop) ~ FO(log(den + 0.01), log(pop), log(area), crf) 
+                + SO(log(den + 0.01), log(pop), log(area), crf), data=.)
+        newdata = tibble(
+          den = quantile(den, na.rm = TRUE, prob = pden), 
+          pop = quantile(pop, na.rm = TRUE, prob = ppop), 
+          area = quantile(area, na.rm = TRUE, prob = parea), 
+          crf = quantile(crf, na.rm = TRUE, prob = pcrf)
+        )
+        y0 = predict(m, newdata = newdata)
+        y1 = predict(m, newdata = newdata %>% mutate(den = den + x) )
+        se = broom::glance(m)$sigma
+        tibble(y0 = y0, y1 = y1, se = se)
+      }
+    ) %>%
+    group_by(category, type) %>%
+    reframe(
+      ysim0 = rnorm(n = 1000, mean = y0, sd = se) %>% exp(),
+      ysim1 = rnorm(n = 1000, mean = y1, sd = se) %>% exp(),
+      diff = ysim0 - ysim1
+    ) %>%
+    group_by(category,type) %>%
+    summarize(
+      estimate = median(diff, na.rm = TRUE),
+      lower = quantile(diff, prob = alpha / 2),
+      upper = quantile(diff, prob = ci + alpha/2), .groups = "drop"
+    ) %>%
+    mutate(x = x,pcrf=pcrf,pden=pden,ppop=ppop,parea=parea,)
+  return(stat)
+}
+# This freezes up: needs troubleshooting
+#get_estimates_rsm(data = data, x = 10, pden = 0.50, ppop = 0.50, parea = 0.50, pcrf = 0.50, ci = 0.95)
 
 
 rm(list = ls())

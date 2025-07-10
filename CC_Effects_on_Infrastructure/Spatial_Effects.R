@@ -23,7 +23,7 @@ Filtered_Dataset_aden <- readRDS("Filtered_Dataset_aden.rds")#Per area, tracts f
 Filtered_Dataset_den2 <- readRDS("Filtered_Dataset_den2.rds")#Per capita, all census tracts, (1000 people)
 Filtered_Dataset_aden2 <- readRDS("Filtered_Dataset_aden2.rds")#Per area, all census tracts, (Sq. Miles)
 all_tracts <- readRDS("all_tracts.rds")#'ALAND' from 'all_tracts' reflects the land-area in square meters
-#--------------------------------------------------------------WIP---------------------------------------------------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------WIP---------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
@@ -35,9 +35,18 @@ tracts_nb <- poly2nb(tracts_sf, queen = TRUE)
 tracts_weights <- nb2listw(tracts_nb, style = "W", zero.policy = TRUE)
 #Fit Standard OLS Model
 
-ols_model <- lm(nri_risk ~ infra_density, data = tracts_sf)
+tracts_sf= full_join(tracts_sf,Filtered_Dataset_den, by="TRACTFIPS")
+tracts_sf= tracts_sf %>% select(TRACTFIPS,den_type,Infrastructure_Density,RISK_VALUE)
+ols_model <- lm(RISK_VALUE ~ Infrastructure_Density, data = tracts_sf)
 summary(ols_model)
 # Moran’s I on residuals
+
+#I'm currently getting an error "different lengths". Maybe this is because some census 
+#tracts are isolated and this is causing the weights matrix to be longer than that of
+#the residuals? Perhaps I can modify the weights_matrix to exclude isolated tracts?
+
+#I may need to filter tracts_sf to just the 25 cities before I full_join with den1.
+#(den2 does not have a field for TRACTFIPS to help the code run, I may need to reformat that.)
 moran_test <- moran.test(residuals(ols_model), listw = tracts_weights, zero.policy = TRUE)
 print(moran_test)
 #p-value < 0.05 == significant spatial autocorrelation
@@ -86,7 +95,7 @@ error_model_decay <- errorsarlm(nri_risk ~ infra_density + median_income + pover
                                 data = tracts_sf, listw = tracts_weights_decay, zero.policy = TRUE)
 summary(error_model_decay)
 
-#------------------------------------------------Notes & Best Practices
+#----------------------------------------------------------------------Notes---------------------------------------------------------------------------------------------------------------------------------------------
 #Ensure data for CRS in meters (e.g., EPSG:5070 or 3857). In lat/lon (EPSG:4326), convert it first:
 # tracts_sf <- st_transform(tracts_sf, crs = 5070)
 #Experiment with different distance thresholds (d2)/ decay types (1/x vs 1/x^2) 
