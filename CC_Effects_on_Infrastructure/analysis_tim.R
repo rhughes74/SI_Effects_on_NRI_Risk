@@ -294,7 +294,10 @@ points_crf = bind_rows(
 #     parea corresponds to size of the region
 #     pcrf corresponds to magnitude of the community risk factor
 
-
+#Bidrectional scaling, or do multiple/separate plots
+#Have no more than 7 different things on a plot (Rule of Thumb for DataViz)
+  #Perhaps using the categories
+#In the scales package, there's "scales::pseudo_log_trans"
 # Ribbon Plots with multiple ribbons (as change 1 variable at level A, at level B, etc.) what happens?
 ggplot() +
   geom_ribbon(data = points_x %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens", alpha = 0.5))+
