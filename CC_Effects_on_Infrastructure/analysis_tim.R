@@ -9,6 +9,7 @@ library(readr)
 library(dplyr)
 library(rsm) # for RSM
 library(metR) # for contour plot labels in ggplot
+library(patchwork) #To create combined plots
 
 setwd(paste0(rstudioapi::getActiveProject(), "/CC_Effects_on_Infrastructure"))
 
@@ -236,6 +237,22 @@ points_x = bind_rows(
   mutate(group = paste0(type, "-", x)) %>%
   arrange(desc(type), x)
 
+#Adding additional sites (Low CRF Facet)
+points_x_lowcrf = bind_rows(
+  lapply(1:50, function(i) {
+    get_estimates(data = data, x = i, pden = 0.50, ppop = 0.50, parea = 0.50, pcrf = 0.25, ci = 0.95)
+  })) %>%
+  mutate(group = paste0(type, "-", x)) %>%
+  arrange(desc(type), x)
+
+#Adding additional sites (High CRF Facet)
+points_x_hicrf = bind_rows(
+  lapply(1:50, function(i) {
+    get_estimates(data = data, x = i, pden = 0.50, ppop = 0.50, parea = 0.50, pcrf = 0.75, ci = 0.95)
+  })) %>%
+  mutate(group = paste0(type, "-", x)) %>%
+  arrange(desc(type), x)
+
 #Increasing the count
 points_den = bind_rows(
   lapply(seq(0.1, 0.95, by = 0.05), function(i) {
@@ -310,7 +327,42 @@ ggplot() +
   geom_ribbon(data = points_x %>% filter(type=='bingocardsgambling'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "bingocardsgambling", alpha = 0.5))+
   geom_ribbon(data = points_x %>% filter(type=='amusementparks'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "amusementparks", alpha = 0.5))+
   geom_ribbon(data = points_x %>% filter(type=='totartsentertainment'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "totartsentertainment", alpha = 0.5))+
-  labs(title="The Effect of Adding Additional Social Infrastructure Sites",x="Sites Added",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")
+  labs(title="The Effect of Adding Additional Social Infrastructure Sites",x="Sites Added",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")+
+  theme_bw(base_size = 14)
+
+
+
+Low=ggplot() +
+  geom_ribbon(data = points_x_lowcrf %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens", alpha = 0.5))+
+  geom_ribbon(data = points_x_lowcrf %>% filter(type=='theatricalproductions'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "theatricalproductions", alpha = 0.5))+
+  geom_ribbon(data = points_x_lowcrf %>% filter(type=='poolhallsbowlingalleys'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "poolhallsbowlingalleys", alpha = 0.5))+
+  geom_ribbon(data = points_x_lowcrf %>% filter(type=='museums'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "museums", alpha = 0.5))+
+  geom_ribbon(data = points_x_lowcrf %>% filter(type=='movietheaters'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "movietheaters", alpha = 0.5))+
+  geom_ribbon(data = points_x_lowcrf %>% filter(type=='hotels'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "hotels", alpha = 0.5))+
+  geom_ribbon(data = points_x_lowcrf %>% filter(type=='casinohotels'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "casinohotels", alpha = 0.5))+
+  geom_ribbon(data = points_x_lowcrf %>% filter(type=='bingocardsgambling'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "bingocardsgambling", alpha = 0.5))+
+  geom_ribbon(data = points_x_lowcrf %>% filter(type=='amusementparks'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "amusementparks", alpha = 0.5))+
+  geom_ribbon(data = points_x_lowcrf %>% filter(type=='totartsentertainment'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "totartsentertainment", alpha = 0.5))+
+  labs(title="The Effect of Adding Additional Social Infrastructure Sites at Low CRF",x="Sites Added",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")+
+  theme_bw(base_size = 14)
+
+Low
+
+High= ggplot() +
+  geom_ribbon(data = points_x_hicrf %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens", alpha = 0.5))+
+  geom_ribbon(data = points_x_hicrf %>% filter(type=='theatricalproductions'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "theatricalproductions", alpha = 0.5))+
+  geom_ribbon(data = points_x_hicrf %>% filter(type=='poolhallsbowlingalleys'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "poolhallsbowlingalleys", alpha = 0.5))+
+  geom_ribbon(data = points_x_hicrf %>% filter(type=='museums'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "museums", alpha = 0.5))+
+  geom_ribbon(data = points_x_hicrf %>% filter(type=='movietheaters'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "movietheaters", alpha = 0.5))+
+  geom_ribbon(data = points_x_hicrf %>% filter(type=='hotels'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "hotels", alpha = 0.5))+
+  geom_ribbon(data = points_x_hicrf %>% filter(type=='casinohotels'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "casinohotels", alpha = 0.5))+
+  geom_ribbon(data = points_x_hicrf %>% filter(type=='bingocardsgambling'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "bingocardsgambling", alpha = 0.5))+
+  geom_ribbon(data = points_x_hicrf %>% filter(type=='amusementparks'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "amusementparks", alpha = 0.5))+
+  geom_ribbon(data = points_x_hicrf %>% filter(type=='totartsentertainment'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "totartsentertainment", alpha = 0.5))+
+  labs(title="The Effect of Adding Additional Social Infrastructure Sites at High CRF",x="Sites Added",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")+
+  theme_bw(base_size = 14)
+
+High
 
 ggplot() +
   geom_ribbon(data = points_den %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens", alpha = 0.5))+
@@ -323,7 +375,8 @@ ggplot() +
   geom_ribbon(data = points_den %>% filter(type=='bingocardsgambling'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "bingocardsgambling", alpha = 0.5))+
   geom_ribbon(data = points_den %>% filter(type=='amusementparks'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "amusementparks", alpha = 0.5))+
   geom_ribbon(data = points_den %>% filter(type=='totartsentertainment'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "totartsentertainment", alpha = 0.5))+
-  labs(title="The Effect of Increasing Social Infrastructure Density",x="Quantile of Social Infrastructure Density",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")
+  labs(title="The Effect of Increasing Social Infrastructure Density",x="Quantile of Social Infrastructure Density",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")+
+  theme_bw(base_size = 14)
 
 ggplot() +
   geom_ribbon(data = points_pop %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens", alpha = 0.5))+
@@ -336,7 +389,8 @@ ggplot() +
   geom_ribbon(data = points_pop %>% filter(type=='bingocardsgambling'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "bingocardsgambling", alpha = 0.5))+
   geom_ribbon(data = points_pop %>% filter(type=='amusementparks'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "amusementparks", alpha = 0.5))+
   geom_ribbon(data = points_pop %>% filter(type=='totartsentertainment'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "totartsentertainment", alpha = 0.5))+
-  labs(title="The Effect on Larger Population Census Tracts",x="Quantile of the Population",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")
+  labs(title="The Effect on Larger Population Census Tracts",x="Quantile of the Population",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")+
+  theme_bw(base_size = 14)
 
 ggplot() +
   geom_ribbon(data = points_area %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens", alpha = 0.5))+
@@ -349,7 +403,8 @@ ggplot() +
   geom_ribbon(data = points_area %>% filter(type=='bingocardsgambling'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "bingocardsgambling", alpha = 0.5))+
   geom_ribbon(data = points_area %>% filter(type=='amusementparks'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "amusementparks", alpha = 0.5))+
   geom_ribbon(data = points_area %>% filter(type=='totartsentertainment'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "totartsentertainment", alpha = 0.5))+
-  labs(title="The Effect on Larger Area Census Tracts",x="Quantile of the Area (sq.mi)",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")
+  labs(title="The Effect on Larger Area Census Tracts",x="Quantile of the Area (sq.mi)",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")+
+  theme_bw(base_size = 14)
 
 
 ggplot() +
@@ -363,7 +418,8 @@ ggplot() +
   geom_ribbon(data = points_crf %>% filter(type=='bingocardsgambling'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "bingocardsgambling", alpha = 0.5))+
   geom_ribbon(data = points_crf %>% filter(type=='amusementparks'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "amusementparks", alpha = 0.5))+
   geom_ribbon(data = points_crf %>% filter(type=='totartsentertainment'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "totartsentertainment", alpha = 0.5))+
-  labs(title="The Effect of Increasing Community Risk Factor",x="Quantile of the Community Risk Factor",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")
+  labs(title="The Effect of Increasing Community Risk Factor",x="Quantile of the Community Risk Factor",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")+
+  theme_bw(base_size = 14)
 
 
 
