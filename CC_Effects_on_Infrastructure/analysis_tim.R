@@ -10,6 +10,7 @@ library(dplyr)
 library(rsm) # for RSM
 library(metR) # for contour plot labels in ggplot
 library(patchwork) #To create combined plots
+library(ggallin)
 
 setwd(paste0(rstudioapi::getActiveProject(), "/CC_Effects_on_Infrastructure"))
 
@@ -328,9 +329,12 @@ ggplot() +
   geom_ribbon(data = points_x %>% filter(type=='amusementparks'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "amusementparks", alpha = 0.5))+
   geom_ribbon(data = points_x %>% filter(type=='totartsentertainment'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "totartsentertainment", alpha = 0.5))+
   labs(title="The Effect of Adding Additional Social Infrastructure Sites",x="Sites Added",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")+
+  scale_y_continuous(
+    breaks = c(300000,100000,30000,10000,3000,1000,300, 100, 30, 10, 3, 0, -3, -10, -30, -100, -300, -1000,-3000,-10000,-30000,-100000,-300000),
+    trans = ggallin::pseudolog10_trans, expand = expansion(add = 0.1)) +
+  scale_x_continuous(breaks = seq(from = 0, to = 50, by = 5),
+                     expand = expansion(add = 0))+
   theme_bw(base_size = 14)
-
-
 
 Low=ggplot() +
   geom_ribbon(data = points_x_lowcrf %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens", alpha = 0.5))+
@@ -344,8 +348,12 @@ Low=ggplot() +
   geom_ribbon(data = points_x_lowcrf %>% filter(type=='amusementparks'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "amusementparks", alpha = 0.5))+
   geom_ribbon(data = points_x_lowcrf %>% filter(type=='totartsentertainment'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "totartsentertainment", alpha = 0.5))+
   labs(title="The Effect of Adding Additional Social Infrastructure Sites at Low CRF",x="Sites Added",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")+
+  scale_y_continuous(
+    breaks = c(300000,100000,30000,10000,3000,1000,300, 100, 30, 10, 3, 0, -3, -10, -30, -100, -300, -1000,-3000,-10000,-30000,-100000,-300000),
+    trans = ggallin::pseudolog10_trans, expand = expansion(add = 0.1)) +
+  scale_x_continuous(breaks = seq(from = 0, to = 50, by = 5),
+                     expand = expansion(add = 0))+
   theme_bw(base_size = 14)
-
 Low
 
 High= ggplot() +
@@ -360,6 +368,11 @@ High= ggplot() +
   geom_ribbon(data = points_x_hicrf %>% filter(type=='amusementparks'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "amusementparks", alpha = 0.5))+
   geom_ribbon(data = points_x_hicrf %>% filter(type=='totartsentertainment'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "totartsentertainment", alpha = 0.5))+
   labs(title="The Effect of Adding Additional Social Infrastructure Sites at High CRF",x="Sites Added",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")+
+  scale_y_continuous(
+    breaks = c(300000,100000,30000,10000,3000,1000,300, 100, 30, 10, 3, 0, -3, -10, -30, -100, -300, -1000,-3000,-10000,-30000,-100000,-300000),
+    trans = ggallin::pseudolog10_trans, expand = expansion(add = 0.1)) +
+  scale_x_continuous(breaks = seq(from = 0, to = 50, by = 5),
+                     expand = expansion(add = 0))+
   theme_bw(base_size = 14)
 
 High
@@ -376,8 +389,12 @@ ggplot() +
   geom_ribbon(data = points_den %>% filter(type=='amusementparks'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "amusementparks", alpha = 0.5))+
   geom_ribbon(data = points_den %>% filter(type=='totartsentertainment'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "totartsentertainment", alpha = 0.5))+
   labs(title="The Effect of Increasing Social Infrastructure Density",x="Quantile of Social Infrastructure Density",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")+
+  scale_y_continuous(
+    breaks = c(300000,100000,30000,10000,3000,1000,300, 100, 30, 10, 3, 0, -3, -10, -30, -100, -300, -1000,-3000,-10000,-30000,-100000,-300000),
+    trans = ggallin::pseudolog10_trans, expand = expansion(add = 0.1)) +
+  scale_x_continuous(breaks = seq(from = 0, to = 1, by = 0.1),
+                     expand = expansion(add = 0))+
   theme_bw(base_size = 14)
-
 ggplot() +
   geom_ribbon(data = points_pop %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens", alpha = 0.5))+
   geom_ribbon(data = points_pop %>% filter(type=='theatricalproductions'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "theatricalproductions", alpha = 0.5))+
@@ -390,6 +407,11 @@ ggplot() +
   geom_ribbon(data = points_pop %>% filter(type=='amusementparks'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "amusementparks", alpha = 0.5))+
   geom_ribbon(data = points_pop %>% filter(type=='totartsentertainment'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "totartsentertainment", alpha = 0.5))+
   labs(title="The Effect on Larger Population Census Tracts",x="Quantile of the Population",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")+
+  scale_y_continuous(
+    breaks = c(300000,100000,30000,10000,3000,1000,300, 100, 30, 10, 3, 0, -3, -10, -30, -100, -300, -1000,-3000,-10000,-30000,-100000,-300000),
+    trans = ggallin::pseudolog10_trans, expand = expansion(add = 0.1)) +
+  scale_x_continuous(breaks = seq(from = 0, to = 1, by = 0.1),
+                     expand = expansion(add = 0))+
   theme_bw(base_size = 14)
 
 ggplot() +
@@ -404,6 +426,11 @@ ggplot() +
   geom_ribbon(data = points_area %>% filter(type=='amusementparks'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "amusementparks", alpha = 0.5))+
   geom_ribbon(data = points_area %>% filter(type=='totartsentertainment'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "totartsentertainment", alpha = 0.5))+
   labs(title="The Effect on Larger Area Census Tracts",x="Quantile of the Area (sq.mi)",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")+
+  scale_y_continuous(
+    breaks = c(300000,100000,30000,10000,3000,1000,300, 100, 30, 10, 3, 0, -3, -10, -30, -100, -300, -1000,-3000,-10000,-30000,-100000,-300000),
+    trans = ggallin::pseudolog10_trans, expand = expansion(add = 0.1)) +
+  scale_x_continuous(breaks = seq(from = 0, to = 1, by = 0.1),
+                     expand = expansion(add = 0))+
   theme_bw(base_size = 14)
 
 
@@ -419,8 +446,12 @@ ggplot() +
   geom_ribbon(data = points_crf %>% filter(type=='amusementparks'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "amusementparks", alpha = 0.5))+
   geom_ribbon(data = points_crf %>% filter(type=='totartsentertainment'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "totartsentertainment", alpha = 0.5))+
   labs(title="The Effect of Increasing Community Risk Factor",x="Quantile of the Community Risk Factor",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")+
+  scale_y_continuous(
+    breaks = c(300000,100000,30000,10000,3000,1000,300, 100, 30, 10, 3, 0, -3, -10, -30, -100, -300, -1000,-3000,-10000,-30000,-100000,-300000),
+    trans = ggallin::pseudolog10_trans, expand = expansion(add = 0.1)) +
+  scale_x_continuous(breaks = seq(from = 0, to = 1, by = 0.1),
+                     expand = expansion(add = 0))+
   theme_bw(base_size = 14)
-
 
 
 # RSM - tile plots
