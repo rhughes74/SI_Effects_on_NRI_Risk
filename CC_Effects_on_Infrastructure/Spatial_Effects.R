@@ -66,7 +66,7 @@ AIC(ols_model, lag_model, error_model)
 #Decaying Spatial Weights Matrix:
 
 #Use Centroids for Distance Calculations
-tracts_sf_centroids <- st_centroid(tracts_sf)
+tracts_sf_centroids <- st_centroid(tracts_sf) 
 #Extract coordinates for distance calculations
 coords <- st_coordinates(tracts_sf_centroids)
 # Build a Distance-Based Neighbors List
