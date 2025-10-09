@@ -3,9 +3,10 @@ Hello! This repo contains the code used to assess the relationship between Natur
 
 ## Datasets Used
 There are 2 datasets that are utilized:
-University of Michigan’s National Neighborhood Data Archive (NANDA) on Arts, Entertainment and Leisure, to capture social infrastructure density
+
+- [ ] University of Michigan’s National Neighborhood Data Archive (NANDA) on Arts, Entertainment and Leisure, to capture social infrastructure density
 and
-FEMA's National Risk Index (NRI) for Estimated Annual Losses attributable to Natural Hazards  (USD2020 Per Capita)
+- [ ] FEMA's National Risk Index (NRI) for Estimated Annual Losses attributable to Natural Hazards  (USD2020 Per Capita)
 
 
 NANDA Data is the nanda_artsentleisure_Tract20_1990-2021_01P.csv obtained via: 
