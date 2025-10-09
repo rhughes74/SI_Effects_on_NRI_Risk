@@ -28,6 +28,10 @@ These datasets are saved as follows:
  - Filtered_Dataset_aden2.rds =INFRASTRUCTURE DENSITY PER Sq. MILE (All Census Tracts)
  - Filtered_Dataset.rds (i.e., no suffix) = INFRASTRUCTURE COUNT.
 
+ Also:
+ - Data.rds       = combines the Filtered_Dataset_den.rds, Filtered_Dataset_aden.rds and Filtered_Dataset.rds, datasets into a single variable for ease of simulation
+ - all_tracts.rds = captures city and geography data via the tigris library
+
 
 ## R Libraries Used:
 
@@ -55,6 +59,7 @@ The GitHub Repo consists of 3 scripts.
 
 - Data_Import_and_Filtering.R ~ To demonstrate how the Filtered_Datasets were made, and to facilitate replication.
 - Linear_Model_Anaysis.R ~ A supplemental analysis creating a direct linear model of the relationship between NANDA and NRI
+- Descriptive_Statistics.R ~ Simple descriptive statistics including the average infrastructure density per capita, NRI risk, infrastructure density per sq. mile and corresponding standard deviations.
 - Simulation_Anaysis.R ~ A simulation linear model of the relationship between NANDA and NRI. 
 
 The Simulation_Analysis is used to produce the graphics and confidence interval results contained in the paper, whilst the other 2 scripts are supplemental to facilitate data transparency and replication.
@@ -70,4 +75,5 @@ Lastly, there are several CSVs included within the GitHub repo to demonstrate th
  - Adding_Additional_Sites_at_HighCRF.csv
  - Adding_Additional_Sites_at_LowCRF.csv
  - The_Effect_of_InfrastructureDensityPerSqMi_on_NRI_Annual_Loss_Per_Capita.csv
+ 
 
