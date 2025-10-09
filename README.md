@@ -42,6 +42,12 @@ library(dplyr)
 library(lme4)
 library(MuMIn)
 library(data.table)
+library(rsm) # for RSM
+library(metR) # for contour plot labels in ggplot
+library(patchwork) #To create combined plots
+library(ggallin)
+library(ggplot2)
+library(units)
 ```
 
 ## Scripts Included
