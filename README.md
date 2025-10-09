@@ -20,11 +20,13 @@ Website links provided as the full datasets are quite large
 To avoid file-size constraints, filtered-down versions of the data leveraged from NANDA and the NRI, are included as apart of the GitHub repo.
 There are several Filtered-Down datasets included as a .rds file.
 These datasets are saved as follows:
+```bash
 Filtered_Dataset_den.rds   =INFRASTRUCTURE DENSITY PER CAPITA (Only Census Tracts from Top 25 Cities)
 Filtered_Dataset_den2.rds  =INFRASTRUCTURE DENSITY PER CAPITA (All Census Tracts)
 Filtered_Dataset_aden.rds  =INFRASTRUCTURE DENSITY PER SQ. MILE (Only Census Tracts from Top 25 Cities)
 Filtered_Dataset_aden2.rds =INFRASTRUCTURE DENSITY PER Sq. MILE (All Census Tracts)
 Filtered_Dataset.rds (i.e., no suffix) = INFRASTRUCTURE COUNT.
+```
 
 ## R Libraries Used:
 
@@ -43,19 +45,22 @@ library(data.table)
 
 ## Scripts Included
 The GitHub Repo consists of 3 scripts.
+```bash
 Data_Import_and_Filtering.R ~ To demonstrate how the Filtered_Datasets were made, and to facilitate replication.
 Linear_Model_Anaysis.R ~ A supplemental analysis creating a direct linear model of the relationship between NANDA and NRI
 Simulation_Anaysis.R ~ A simulation linear model of the relationship between NANDA and NRI. 
-
+```
 The Simulation_Analysis is used to produce the graphics and confidence interval results contained in the paper, whilst the other 2 scripts are supplemental to facilitate data transparency and replication.
 
 ## CSV's Included
 Lastly, there are several CSVs included within the GitHub repo to demonstrate the exact results produced from the simulator that are illustrated with the graphics in the paper:
-Adding_Additional_CommunityRiskFactor.csv
-Adding_Additional_Density.csv
-Adding_Additional_DensityPerSqMi.csv
-Adding_Additional_Population.csv
-Adding_Additional_Sites.csv
-Adding_Additional_Sites_at_HighCRF.csv
-Adding_Additional_Sites_at_LowCRF.csv
-The_Effect_of_InfrastructureDensityPerSqMi_on_NRI_Annual_Loss_Per_Capita.csv
+
+-Adding_Additional_CommunityRiskFactor.csv
+-Adding_Additional_Density.csv
+-Adding_Additional_DensityPerSqMi.csv
+-Adding_Additional_Population.csv
+-Adding_Additional_Sites.csv
+-Adding_Additional_Sites_at_HighCRF.csv
+-Adding_Additional_Sites_at_LowCRF.csv
+-The_Effect_of_InfrastructureDensityPerSqMi_on_NRI_Annual_Loss_Per_Capita.csv
+
