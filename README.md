@@ -21,11 +21,11 @@ To avoid file-size constraints, filtered-down versions of the data leveraged fro
 There are several Filtered-Down datasets included as a .rds file.
 These datasets are saved as follows:
 
-- Filtered_Dataset_den.rds   =INFRASTRUCTURE DENSITY PER CAPITA (Only Census Tracts from Top 25 Cities)
-- Filtered_Dataset_den2.rds  =INFRASTRUCTURE DENSITY PER CAPITA (All Census Tracts)
-- Filtered_Dataset_aden.rds  =INFRASTRUCTURE DENSITY PER SQ. MILE (Only Census Tracts from Top 25 Cities)
-- Filtered_Dataset_aden2.rds =INFRASTRUCTURE DENSITY PER Sq. MILE (All Census Tracts)
-- Filtered_Dataset.rds (i.e., no suffix) = INFRASTRUCTURE COUNT.
+ - Filtered_Dataset_den.rds   =INFRASTRUCTURE DENSITY PER CAPITA (Only Census Tracts from Top 25 Cities)
+ - Filtered_Dataset_den2.rds  =INFRASTRUCTURE DENSITY PER CAPITA (All Census Tracts)
+ - Filtered_Dataset_aden.rds  =INFRASTRUCTURE DENSITY PER SQ. MILE (Only Census Tracts from Top 25 Cities)
+ - Filtered_Dataset_aden2.rds =INFRASTRUCTURE DENSITY PER Sq. MILE (All Census Tracts)
+ - Filtered_Dataset.rds (i.e., no suffix) = INFRASTRUCTURE COUNT.
 
 
 ## R Libraries Used:
@@ -55,12 +55,12 @@ The Simulation_Analysis is used to produce the graphics and confidence interval 
 ## CSV's Included
 Lastly, there are several CSVs included within the GitHub repo to demonstrate the exact results produced from the simulator that are illustrated with the graphics in the paper:
 
-- Adding_Additional_CommunityRiskFactor.csv
-- Adding_Additional_Density.csv
-- Adding_Additional_DensityPerSqMi.csv
-- Adding_Additional_Population.csv
-- Adding_Additional_Sites.csv
-- Adding_Additional_Sites_at_HighCRF.csv
-- Adding_Additional_Sites_at_LowCRF.csv
-- The_Effect_of_InfrastructureDensityPerSqMi_on_NRI_Annual_Loss_Per_Capita.csv
+ - Adding_Additional_CommunityRiskFactor.csv
+ - Adding_Additional_Density.csv
+ - Adding_Additional_DensityPerSqMi.csv
+ - Adding_Additional_Population.csv
+ - Adding_Additional_Sites.csv
+ - Adding_Additional_Sites_at_HighCRF.csv
+ - Adding_Additional_Sites_at_LowCRF.csv
+ - The_Effect_of_InfrastructureDensityPerSqMi_on_NRI_Annual_Loss_Per_Capita.csv
 
