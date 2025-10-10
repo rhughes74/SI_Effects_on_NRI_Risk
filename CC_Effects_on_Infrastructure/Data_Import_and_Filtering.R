@@ -6,9 +6,9 @@ library(tidyverse)
 library(broom.mixed)
 library(readr)
 library(dplyr)
-library(lme4)
-library(MuMIn)
 library(data.table)
+
+setwd("CC_Effects_on_Infrastructure")
 
 # This script cleans in the two full-datasets once downloaded from their respective source pages online -----------------------------------------------------
 # Note: The Full-Datasets are quite large (~GB scale!)

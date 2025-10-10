@@ -6,10 +6,9 @@ library(tidyverse)
 library(broom.mixed)
 library(readr)
 library(dplyr)
-library(lme4)
-library(MuMIn)
 library(ggplot2)
 library(units)
+
 
 setwd("CC_Effects_on_Infrastructure")
 

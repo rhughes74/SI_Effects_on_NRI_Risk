@@ -5,8 +5,6 @@ library(stringr)
 library(tidyverse)
 library(readr)
 library(dplyr)
-library(rsm) # for RSM
-library(metR) # for contour plot labels in ggplot
 library(patchwork) #To create combined plots
 library(ggallin)
 
