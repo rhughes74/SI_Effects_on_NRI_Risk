@@ -8,8 +8,6 @@
 
 ### Description
 
-
-
 ------------------------------------------------------------------------
 
 ## 2. Code and Functions
@@ -20,7 +18,6 @@
 | `Linear_Model_Anaysis.R` | Fits A supplemental analysis creating a direct linear model of the relationship between NANDA and NRI | cleaned CSV | model summary, coefficients |
 | `Descriptive_Statistics.R` | Simple descriptive statistics including the average infrastructure density per capita, NRI risk, infrastructure density per sq. mile and corresponding standard deviations. | model summary | PNG figures |
 | `Simulation_Anaysis.R` | A simulation linear model of the relationship between NANDA and NRI. | model summary | PNG figures |
-
 
 ## 3. Data Dictionary
 
