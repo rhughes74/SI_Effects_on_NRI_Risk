@@ -25,108 +25,107 @@
 
 The stats_den variable combines information taken from both the NANDA and NRI filtered datasets to produce averages and standard deviations across the metrics of interest: Infrastructure Density per Capita and NRI Risk Value.
 
-| Variable | Type | Description | Units | Source | Notes |
-|------------|------------|------------|------------|------------|------------|
-| `den_type` | character | NANDA Social Infrastructure Type | NA | NANDA |  |
-| `year` | numeric | Year represented | year | NANDA & NRI | 2020 is the most recent date from which there is applicable data from both datasets |
-| `state` | character | State represented | NA | Census Shapefiles |  |
-| `county` | character | County represented | NA | Census Shapefiles |  |
-| `city` | character | City represented | NA | Census Shapefiles |  |
-| `mean_Infra_Den` | numeric | Mean Infrastructure Density per Capita | Units per Capita | NANDA |  |
-| `sd_Infra_Den` | numeric | Standard Deviation Infrastructure Density per Capita | NA | NANDA |  |
-| `mean_RISK_VALUE` | numeric | Mean FEMA NRI Risk Value | USD2020 | NRI |  |
-| `sd_RISK_VALUE` | numeric | Standard Deviation FEMA NRI Risk Value | USD2020 | NRI |  |
+| Variable | Type | Description | Units | Source |
+|---------------|---------------|---------------|---------------|---------------|
+| `den_type` | character | NANDA Social Infrastructure Type | NA | NANDA |
+| `year` | numeric | Year represented | year | NANDA & NRI |
+| `state` | character | State represented | NA | Census Shapefiles |
+| `county` | character | County represented | NA | Census Shapefiles |
+| `city` | character | City represented | NA | Census Shapefiles |
+| `mean_Infra_Den` | numeric | Mean Infrastructure Density per Capita | Units per Capita | NANDA |
+| `sd_Infra_Den` | numeric | Standard Deviation Infrastructure Density per Capita | NA | NANDA |
+| `mean_RISK_VALUE` | numeric | Mean FEMA NRI Risk Value | USD2020 | NRI |
+| `sd_RISK_VALUE` | numeric | Standard Deviation FEMA NRI Risk Value | USD2020 | NRI |
 
 **Dataset:** `Descriptive_Statistics.R -> stats_aden`
 
 The stats_aden variable combines information taken from both the NANDA and NRI filtered datasets to produce averages and standard deviations across the metrics of interest similar to stats_den but instead with respect to Infrastructure Density per unit area (i.e., per square mile) and NRI Risk Value.
 
-| Variable | Type | Description | Units | Source | Notes |
-|------------|------------|------------|------------|------------|------------|
-| `aden_type` | character | NANDA Social Infrastructure Type | NA | NANDA |  |
-| `year` | numeric | Year represented | year | NANDA & NRI | 2020 is the most recent date from which there is applicable data from both datasets |
-| `state` | character | State represented | NA | Census Shapefiles |  |
-| `county` | character | County represented | NA | Census Shapefiles |  |
-| `city` | character | City represented | NA | Census Shapefiles |  |
-| `mean_Infra_Den` | numeric | Mean Infrastructure Density per Square Mile | Units per Sq. Mile | NANDA |  |
-| `sd_Infra_Den` | numeric | Standard Deviation Infrastructure Density per Square Mile | NA | NANDA |  |
-| `Var_Coef_Infra` | numeric | Average Coefficient of Variance Infrastructure Density per Square Mile | NA | NRI |  |
-| `mean_RISK_VALUE` | numeric | Mean FEMA NRI Risk Value | USD2020 | NRI |  |
-| `sd_RISK_VALUE` | numeric | Standard Deviation FEMA NRI Risk Value | USD2020 | NRI |  |
-| `Var_Coef_RISK` | numeric | AVerage Coefficient of Variance FEMA NRI Risk Value | NA | NRI |  |
+| Variable | Type | Description | Units | Source |
+|---------------|---------------|---------------|---------------|---------------|
+| `aden_type` | character | NANDA Social Infrastructure Type | NA | NANDA |
+| `year` | numeric | Year represented | year | NANDA & NRI |
+| `state` | character | State represented | NA | Census Shapefiles |
+| `county` | character | County represented | NA | Census Shapefiles |
+| `city` | character | City represented | NA | Census Shapefiles |
+| `mean_Infra_Den` | numeric | Mean Infrastructure Density per Square Mile | Units per Sq. Mile | NANDA |
+| `sd_Infra_Den` | numeric | Standard Deviation Infrastructure Density per Square Mile | NA | NANDA |
+| `Var_Coef_Infra` | numeric | Average Coefficient of Variance Infrastructure Density per Square Mile | NA | NRI |
+| `mean_RISK_VALUE` | numeric | Mean FEMA NRI Risk Value | USD2020 | NRI |
+| `sd_RISK_VALUE` | numeric | Standard Deviation FEMA NRI Risk Value | USD2020 | NRI |
+| `Var_Coef_RISK` | numeric | AVerage Coefficient of Variance FEMA NRI Risk Value | NA | NRI |
 
 **Dataset:** `Descriptive_Statistics.R -> stats_coef_Infr`
 
 The stats_coef_Infr variable evaluates data taken from the NANDA and NRI filtered datasets via coefficient of variance measures. These measures aim to characterize and compare the degree of spatial variability that occurs between the two primary metrics of interest in the study.
 
-| Variable | Type | Description | Units | Source | Notes |
-|------------|------------|------------|------------|------------|------------|
-| `den_type` | character | NANDA Social Infrastructure Type | NA | NANDA |  |
-| `min_Var_Coef_Infra` | numeric | Minimum Coefficient of Variance Infrastructure Density per Square Mile | NA | NRI |  |
-| `avg_Var_Coef_Infra` | numeric | Average Coefficient of Variance Infrastructure Density per Square Mile | NA | NRI |  |
-| `max_Var_Coef_Infra` | numeric | Maximum Coefficient of Variance Infrastructure Density per Square Mile | NA | NRI |  |
-| `min_Var_Coef_RISK` | numeric | Minimum Coefficient of Variance FEMA NRI Risk Value | NA | NRI |  |
-| `avg_Var_Coef_RISK` | numeric | Average Coefficient of Variance FEMA NRI Risk Value | NA | NRI |  |
-| `max_Var_Coef_RISK` | numeric | Maximum Coefficient of Variance FEMA NRI Risk Value | NA | NRI |  |
+| Variable | Type | Description | Units | Source |
+|---------------|---------------|---------------|---------------|---------------|
+| `den_type` | character | NANDA Social Infrastructure Type | NA | NANDA |
+| `min_Var_Coef_Infra` | numeric | Minimum Coefficient of Variance Infrastructure Density per Square Mile | NA | NRI |
+| `avg_Var_Coef_Infra` | numeric | Average Coefficient of Variance Infrastructure Density per Square Mile | NA | NRI |
+| `max_Var_Coef_Infra` | numeric | Maximum Coefficient of Variance Infrastructure Density per Square Mile | NA | NRI |
+| `min_Var_Coef_RISK` | numeric | Minimum Coefficient of Variance FEMA NRI Risk Value | NA | NRI |
+| `avg_Var_Coef_RISK` | numeric | Average Coefficient of Variance FEMA NRI Risk Value | NA | NRI |
+| `max_Var_Coef_RISK` | numeric | Maximum Coefficient of Variance FEMA NRI Risk Value | NA | NRI |
 
 **Dataset:** `Descriptive_Statistics.R -> stats_coef_cities`
 
-The stats_coef_cities variable evaluates data taken from Census Shapefiles and the NRI filtered datasets via coefficient of variance measures and city size calculations. These measures aim to characterize and compare the degree of spatial variability between cities examined both before and after making adjustments for city area (i.e., city size/city sprawl.)
+The stats_coef_cities variable evaluates data taken from Census Shapefiles and the NRI filtered datasets via coefficient of variance measures and city size calculations. These measures aim to characterize and compare the degree of spatial variability between cities examined, both before, and after, making adjustments for city area (i.e., city size/city sprawl.)
 
-| Variable | Type | Description | Units | Source | Notes |
-|------------|------------|------------|------------|------------|------------|
-| `city` | character | City represented | NA | Census Shapefiles |  |
-| `min_Var_Coef_RISK` | numeric | Minimum Coefficient of Variance FEMA NRI Risk Value | NA | NRI |  |
-| `avg_Var_Coef_RISK` | numeric | Average Coefficient of Variance FEMA NRI Risk Value | NA | NRI |  |
-| `max_Var_Coef_RISK` | numeric | Maximum Coefficient of Variance FEMA NRI Risk Value | NA | NRI |  |
-| `min_Adjusted` | numeric | Minimum Coefficient of Variance FEMA NRI Risk Value Adjusted for City Size | NA | NRI |  |
-| `Avg_Adjusted` | numeric | Average Coefficient of Variance FEMA NRI Risk Value Adjusted for City Size | NA | NRI |  |
-| `max_Adjusted` | numeric | Maximum Coefficient of Variance FEMA NRI Risk Value Adjusted for City Size | NA | NRI |  |
+| Variable | Type | Description | Units | Source |
+|---------------|---------------|---------------|---------------|---------------|
+| `city` | character | City represented | NA | Census Shapefiles |
+| `min_Var_Coef_RISK` | numeric | Minimum Coefficient of Variance FEMA NRI Risk Value | NA | NRI |
+| `avg_Var_Coef_RISK` | numeric | Average Coefficient of Variance FEMA NRI Risk Value | NA | NRI |
+| `max_Var_Coef_RISK` | numeric | Maximum Coefficient of Variance FEMA NRI Risk Value | NA | NRI |
+| `min_Adjusted` | numeric | Minimum Coefficient of Variance FEMA NRI Risk Value Adjusted for City Size | NA | NRI |
+| `Avg_Adjusted` | numeric | Average Coefficient of Variance FEMA NRI Risk Value Adjusted for City Size | NA | NRI |
+| `max_Adjusted` | numeric | Maximum Coefficient of Variance FEMA NRI Risk Value Adjusted for City Size | NA | NRI |
 
 **Dataset:** `Simulation_Analysis.R -> data`
 
 The data variable combines information taken from both the NANDA and NRI filtered datasets (i.e., The Filtered_Dataset\_... .rds files are loaded in as: "data1", "data2", and "data3" then combined) such that all essential information is contained within a single dataframe.
 
-| Variable | Type | Description | Units | Source | Notes |
-|------------|------------|------------|------------|------------|------------|
-| `year` | numeric | Year represented | year | NANDA & NRI | 2020 is the most recent date from which there is applicable data from both datasets |
-| `city` | character | City represented | NA | Census Shapefiles | Cleaned; no missing |
-| `county` | character | County represented | NA | Census Shapefiles | Values: “control”, “treatment” |
-| `geoid` | integer | Census Tract ID | NA | NANDA & NRI | Cleaned; no missing |
-| `risk` | numeric | NRI Risk Value | NA | NRI | Cleaned; no missing |
-| `crf` | numeric | NRI Community Risk Factor (CRF) | NA | NRI | Cleaned; no missing |
-| `eal` | numeric | NRI Estimated Annual Loss (EAL) | USD2020 | NRI | Cleaned; no missing |
-| `type` | character | NANDA Social Infrastructure Type | NA | NANDA | Cleaned; no missing |
-| `count` | numeric | NANDA Social Infrastructure Count | NA | NANDA | Cleaned; no missing |
-| `pop` | numeric | NRI Recorded Population | Persons | NRI | Cleaned; no missing |
-| `den` | numeric | NANDA Social Infrastructure Density per Capita | Sites per capita | NANDA | Cleaned; no missing |
-| `aden` | numeric | NANDA Social Infrastructure Density per Sq. Mile | Sites per Sq. Mile | NANDA | Cleaned; no missing |
-| `category` | character | NANDA Social Infrastructure General Category | NA | Derived from NANDA | Cleaned; no missing |
-| `area` | numeric | Census Tract Area | Sq. Mile | Census Shapefiles | Cleaned; no missing |
-| `any` | Logical | Check if there's any social infrastruture in Census Tract | Boolean | Derived from NANDA | Cleaned; no missing |
+| Variable | Type | Description | Units | Source |
+|---------------|---------------|---------------|---------------|---------------|
+| `year` | numeric | Year represented | year | NANDA & NRI |
+| `city` | character | City represented | NA | Census Shapefiles |
+| `county` | character | County represented | NA | Census Shapefiles |
+| `geoid` | integer | Census Tract ID | NA | NANDA & NRI |
+| `risk` | numeric | NRI Risk Value | NA | NRI |
+| `crf` | numeric | NRI Community Risk Factor (CRF) | NA | NRI |
+| `eal` | numeric | NRI Estimated Annual Loss (EAL) | USD2020 | NRI |
+| `type` | character | NANDA Social Infrastructure Type | NA | NANDA |
+| `count` | numeric | NANDA Social Infrastructure Count | NA | NANDA |
+| `pop` | numeric | NRI Recorded Population | Persons | NRI |
+| `den` | numeric | NANDA Social Infrastructure Density per Capita | Sites per capita | NANDA |
+| `aden` | numeric | NANDA Social Infrastructure Density per Sq. Mile | Sites per Sq. Mile | NANDA |
+| `category` | character | NANDA Social Infrastructure General Category | NA | Derived from NANDA |
+| `area` | numeric | Census Tract Area | Sq. Mile | Census Shapefiles |
+| `any` | Logical | Check if there's any social infrastruture in Census Tract | Boolean | Derived from NANDA |
 
 **Dataset:** `Simulation_Analysis.R -> points`
 
-The points variable contains the information created from a simulation of the linear model performed on the "data" variable. There are several versions of "points" to explore different inputs within the simulator. "\_x" varies the count of sites added, "\_area" varies the infrastructure density per sq. mile of sites, "\_crf" varies the community risk factor, "\_den" varies the infrastructure density per capita, "\_pop" varies the population directly and, "\_x_hicrf" and"\_x_lowcrf" explore the count of sites added at high and low crf respectively.
+The points variable contains the information created from a simulation of the linear model performed on the "data" variable. There are several versions of "points" to explore different inputs within the simulator. "\_x" varies the count of sites added, "\_area" varies the infrastructure density per sq. mile of sites, "\_crf" varies the community risk factor, "\_den" varies the infrastructure density per capita, "\_pop" varies the population directly and, "\_x_hicrf" and"\_x_lowcrf" explore the count of sites added at high and low crf respectively. (Note: 2020 is the most recent date from which there is applicable data from both datasets.)
 
-| Variable | Type | Description | Units | Source | Notes |
-|------------|------------|------------|------------|------------|------------|
-| `year` | numeric | Year represented | year | NANDA & NRI | 2020 is the most recent date from which there is applicable data from both datasets |
-| `city` | character | City represented | NA | Census Shapefiles | Cleaned; no missing |
-| `county` | character | County represented | NA | Census Shapefiles | Values: “control”, “treatment” |
-| `geoid` | integer | Census Tract ID | NA | NANDA & NRI | Cleaned; no missing |
-| `risk` | numeric | NRI Risk Value | NA | NRI | Cleaned; no missing |
-| `crf` | numeric | NRI Community Risk Factor | NA | NRI | Cleaned; no missing |
-| `eal` | numeric | NRI Estimated Annual Loss | USD2020 | NRI | Cleaned; no missing |
-| `type` | character | NANDA Social Infrastructure Type | NA | NANDA | Cleaned; no missing |
-| `count` | numeric | NANDA Social Infrastructure Count | NA | NANDA | Cleaned; no missing |
-| `pop` | numeric | NRI Recorded Population | Persons | NRI | Cleaned; no missing |
-| `den` | numeric | NANDA Social Infrastructure Density per Capita | Sites per capita | NANDA | Cleaned; no missing |
-| `aden` | numeric | NANDA Social Infrastructure Density per Sq. Mile | Sites per Sq. Mile | NANDA | Cleaned; no missing |
-| `category` | character | NANDA Social Infrastructure General Category | NA | Derived from NANDA | Cleaned; no missing |
-| `area` | numeric | Census Tract Area | Sq. Mile | Census Shapefiles | Cleaned; no missing |
-| `any` | Logical | Check if there's any social infrastruture in Census Tract | Boolean | Derived from NANDA | Cleaned; no missing |
-| ... | ... | ... | ... | ... | ... |
+| Variable | Type | Description | Units | Source |
+|---------------|---------------|---------------|---------------|---------------|
+| `year` | numeric | Year represented | year | NANDA & NRI |
+| `city` | character | City represented | NA | Census Shapefiles |
+| `county` | character | County represented | NA | Census Shapefiles |
+| `geoid` | integer | Census Tract ID | NA | NANDA & NRI |
+| `risk` | numeric | NRI Risk Value | NA | NRI |
+| `crf` | numeric | NRI Community Risk Factor | NA | NRI |
+| `eal` | numeric | NRI Estimated Annual Loss | USD2020 | NRI |
+| `type` | character | NANDA Social Infrastructure Type | NA | NANDA |
+| `count` | numeric | NANDA Social Infrastructure Count | NA | NANDA |
+| `pop` | numeric | NRI Recorded Population | Persons | NRI |
+| `den` | numeric | NANDA Social Infrastructure Density per Capita | Sites per capita | NANDA |
+| `aden` | numeric | NANDA Social Infrastructure Density per Sq. Mile | Sites per Sq. Mile | NANDA |
+| `category` | character | NANDA Social Infrastructure General Category | NA | Derived from NANDA |
+| `area` | numeric | Census Tract Area | Sq. Mile | Census Shapefiles |
+| `any` | Logical | Check if there's any social infrastruture in Census Tract | Boolean | Derived from NANDA |
 
 ------------------------------------------------------------------------
 
@@ -148,13 +147,11 @@ The points variable contains the information created from a simulation of the li
 | ggplot2     | 4.3.2   | Create Ribbon Plots               |
 | units       | 4.3.2   | Handling Physical Units           |
 
-### Reproducibility
+## Reproducibility
 
--   **Environment file:** `environment.yml` or `requirements.txt`
-
--   
-
-    ## **System info:** Windows 11 x64, CPU, memory
+```         
+## **System info:** Windows 11 x64, CPU, memory
+```
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
