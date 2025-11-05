@@ -4,7 +4,7 @@
 **Author(s):** Ryan Hughes, and Tim Fraser\
 **Date:** 09-Oct-2025\
 **Version:** 1.0\
-**Repository:** [GitHub link]
+**Repository:** https://github.com/rhughes74/SI_Effects_on_NRI_Risk
 
 ### Description
 
