@@ -148,33 +148,25 @@ The points variable contains the information created from a simulation of the li
 | units       | 4.3.2   | Handling Physical Units           |
 
 ## Reproducibility
-
 ```         
 ## **System info:** Windows 11 x64, CPU, memory
 ```
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+source("Data_Import_and_Filtering.R")
 ```
 
-## GitHub Documents
-
-This is an R Markdown format used for publishing markdown documents to GitHub. When you click the **Knit** button all R code chunks are run and a markdown file (.md) suitable for publishing to GitHub is generated.
-
-## Including Code
-
-You can include R code in the document as follows:
+## Descriptive Statistics
 
 ```{r cars}
-summary(cars)
+source("Descriptive_Statistics.R")
 ```
 
-## Including Plots
+## Simulated Plots
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r pressure, echo=TRUE}
+knitr::include_graphics("The Effect of Adding Additional Social Infrastructure Sites (median CRF).png")
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
