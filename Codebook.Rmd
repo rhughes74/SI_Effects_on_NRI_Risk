@@ -149,7 +149,7 @@ The points variable contains the information created from a simulation of the li
 
 ## Reproducibility
 ```         
-## **System info:** Windows 11 x64, CPU, memory
+## **System info:** Windows 11 x64, Ryzen R5 3600X, 16GB
 ```
 
 ```{r setup, include=FALSE}
