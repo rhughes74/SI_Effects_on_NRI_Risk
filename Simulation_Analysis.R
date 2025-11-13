@@ -409,17 +409,27 @@ points_crf = bind_rows(
   #Perhaps using the categories
 #In the scales package, there's "scales::pseudo_log_trans"
 # Ribbon Plots with multiple ribbons (as change 1 variable at level A, at level B, etc.) what happens?
+
+#To load in CSVs (i.e., pre-simulated data)
+#points_x <- read_csv("CSVs/Adding_Additional_Sites.csv")
+#points_x_lowcrf <- read_csv("CSVs/Adding_Additional_Sites_at_LowCRF.csv")
+#points_x_hicrf <- read_csv("CSVs/Adding_Additional_Sites_at_HighCRF.csv")
+#points_den <- read_csv("CSVs/Adding_Additional_Density.csv")
+#points_pop <- read_csv("CSVs/Adding_Additional_Population.csv")
+#points_area <- read_csv("CSVs/Adding_Additional_DensityPerSqMi.csv")
+#points_crf <- read_csv("CSVs/Adding_Additional_CommunityRiskFactor.csv")
+
 ggplot() +
-  geom_ribbon(data = points_x %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens", alpha = 0.5))+
-  geom_ribbon(data = points_x %>% filter(type=='theatricalproductions'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "theatricalproductions", alpha = 0.5))+
-  geom_ribbon(data = points_x %>% filter(type=='poolhallsbowlingalleys'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "poolhallsbowlingalleys", alpha = 0.5))+
-  geom_ribbon(data = points_x %>% filter(type=='museums'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "museums", alpha = 0.5))+
-  geom_ribbon(data = points_x %>% filter(type=='movietheaters'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "movietheaters", alpha = 0.5))+
-  geom_ribbon(data = points_x %>% filter(type=='hotels'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "hotels", alpha = 0.5))+
-  geom_ribbon(data = points_x %>% filter(type=='casinohotels'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "casinohotels", alpha = 0.5))+
-  geom_ribbon(data = points_x %>% filter(type=='bingocardsgambling'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "bingocardsgambling", alpha = 0.5))+
-  geom_ribbon(data = points_x %>% filter(type=='amusementparks'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "amusementparks", alpha = 0.5))+
-  geom_ribbon(data = points_x %>% filter(type=='totartsentertainment'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "totartsentertainment", alpha = 0.5))+
+  geom_ribbon(data = points_x %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens"), alpha = 0.5)+
+  geom_ribbon(data = points_x %>% filter(type=='theatricalproductions'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "theatricalproductions"), alpha = 0.5)+
+  geom_ribbon(data = points_x %>% filter(type=='poolhallsbowlingalleys'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "poolhallsbowlingalleys"), alpha = 0.5)+
+  geom_ribbon(data = points_x %>% filter(type=='museums'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "museums"), alpha = 0.5)+
+  geom_ribbon(data = points_x %>% filter(type=='movietheaters'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "movietheaters"), alpha = 0.5)+
+  geom_ribbon(data = points_x %>% filter(type=='hotels'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "hotels"), alpha = 0.5)+
+  geom_ribbon(data = points_x %>% filter(type=='casinohotels'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "casinohotels"), alpha = 0.5)+
+  geom_ribbon(data = points_x %>% filter(type=='bingocardsgambling'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "bingocardsgambling"), alpha = 0.5)+
+  geom_ribbon(data = points_x %>% filter(type=='amusementparks'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "amusementparks"), alpha = 0.5)+
+  geom_ribbon(data = points_x %>% filter(type=='totartsentertainment'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "totartsentertainment"), alpha = 0.5)+
   labs(title="The Effect of Adding Additional Social Infrastructure Sites",x="Sites Added",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")+
   scale_y_continuous(
     breaks = c(300000,100000,30000,10000,3000,1000,300, 100, 30, 10, 3, 0, -3, -10, -30, -100, -300, -1000,-3000,-10000,-30000,-100000,-300000),
@@ -429,17 +439,17 @@ ggplot() +
   theme_bw(base_size = 14)
 
 Low=ggplot() +
-  geom_ribbon(data = points_x_lowcrf %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens", alpha = 0.5))+
-  geom_ribbon(data = points_x_lowcrf %>% filter(type=='theatricalproductions'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "theatricalproductions", alpha = 0.5))+
-  geom_ribbon(data = points_x_lowcrf %>% filter(type=='poolhallsbowlingalleys'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "poolhallsbowlingalleys", alpha = 0.5))+
-  geom_ribbon(data = points_x_lowcrf %>% filter(type=='museums'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "museums", alpha = 0.5))+
-  geom_ribbon(data = points_x_lowcrf %>% filter(type=='movietheaters'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "movietheaters", alpha = 0.5))+
-  geom_ribbon(data = points_x_lowcrf %>% filter(type=='hotels'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "hotels", alpha = 0.5))+
-  geom_ribbon(data = points_x_lowcrf %>% filter(type=='casinohotels'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "casinohotels", alpha = 0.5))+
-  geom_ribbon(data = points_x_lowcrf %>% filter(type=='bingocardsgambling'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "bingocardsgambling", alpha = 0.5))+
-  geom_ribbon(data = points_x_lowcrf %>% filter(type=='amusementparks'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "amusementparks", alpha = 0.5))+
-  geom_ribbon(data = points_x_lowcrf %>% filter(type=='totartsentertainment'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "totartsentertainment", alpha = 0.5))+
-  labs(title="The Effect of Adding Additional Social Infrastructure Sites at Low CRF",x="Sites Added",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")+
+  geom_ribbon(data = points_x_lowcrf %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens"), alpha = 0.5)+
+  geom_ribbon(data = points_x_lowcrf %>% filter(type=='theatricalproductions'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "theatricalproductions"), alpha = 0.5)+
+  geom_ribbon(data = points_x_lowcrf %>% filter(type=='poolhallsbowlingalleys'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "poolhallsbowlingalleys"), alpha = 0.5)+
+  geom_ribbon(data = points_x_lowcrf %>% filter(type=='museums'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "museums"), alpha = 0.5)+
+  geom_ribbon(data = points_x_lowcrf %>% filter(type=='movietheaters'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "movietheaters"), alpha = 0.5)+
+  geom_ribbon(data = points_x_lowcrf %>% filter(type=='hotels'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "hotels"), alpha = 0.5)+
+  geom_ribbon(data = points_x_lowcrf %>% filter(type=='casinohotels'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "casinohotels"), alpha = 0.5)+
+  geom_ribbon(data = points_x_lowcrf %>% filter(type=='bingocardsgambling'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "bingocardsgambling"), alpha = 0.5)+
+  geom_ribbon(data = points_x_lowcrf %>% filter(type=='amusementparks'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "amusementparks"), alpha = 0.5)+
+  geom_ribbon(data = points_x_lowcrf %>% filter(type=='totartsentertainment'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "totartsentertainment"), alpha = 0.5)+
+  labs(title="Low CRF",x="Sites Added",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")+
   scale_y_continuous(
     breaks = c(300000,100000,30000,10000,3000,1000,300, 100, 30, 10, 3, 0, -3, -10, -30, -100, -300, -1000,-3000,-10000,-30000,-100000,-300000),
     trans = ggallin::pseudolog10_trans, expand = expansion(add = 0.1)) +
@@ -449,17 +459,17 @@ Low=ggplot() +
 Low
 
 High= ggplot() +
-  geom_ribbon(data = points_x_hicrf %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens", alpha = 0.5))+
-  geom_ribbon(data = points_x_hicrf %>% filter(type=='theatricalproductions'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "theatricalproductions", alpha = 0.5))+
-  geom_ribbon(data = points_x_hicrf %>% filter(type=='poolhallsbowlingalleys'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "poolhallsbowlingalleys", alpha = 0.5))+
-  geom_ribbon(data = points_x_hicrf %>% filter(type=='museums'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "museums", alpha = 0.5))+
-  geom_ribbon(data = points_x_hicrf %>% filter(type=='movietheaters'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "movietheaters", alpha = 0.5))+
-  geom_ribbon(data = points_x_hicrf %>% filter(type=='hotels'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "hotels", alpha = 0.5))+
-  geom_ribbon(data = points_x_hicrf %>% filter(type=='casinohotels'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "casinohotels", alpha = 0.5))+
-  geom_ribbon(data = points_x_hicrf %>% filter(type=='bingocardsgambling'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "bingocardsgambling", alpha = 0.5))+
-  geom_ribbon(data = points_x_hicrf %>% filter(type=='amusementparks'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "amusementparks", alpha = 0.5))+
-  geom_ribbon(data = points_x_hicrf %>% filter(type=='totartsentertainment'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "totartsentertainment", alpha = 0.5))+
-  labs(title="The Effect of Adding Additional Social Infrastructure Sites at High CRF",x="Sites Added",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")+
+  geom_ribbon(data = points_x_hicrf %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens"), alpha = 0.5)+
+  geom_ribbon(data = points_x_hicrf %>% filter(type=='theatricalproductions'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "theatricalproductions"), alpha = 0.5)+
+  geom_ribbon(data = points_x_hicrf %>% filter(type=='poolhallsbowlingalleys'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "poolhallsbowlingalleys"), alpha = 0.5)+
+  geom_ribbon(data = points_x_hicrf %>% filter(type=='museums'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "museums"), alpha = 0.5)+
+  geom_ribbon(data = points_x_hicrf %>% filter(type=='movietheaters'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "movietheaters"), alpha = 0.5)+
+  geom_ribbon(data = points_x_hicrf %>% filter(type=='hotels'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "hotels"), alpha = 0.5)+
+  geom_ribbon(data = points_x_hicrf %>% filter(type=='casinohotels'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "casinohotels"), alpha = 0.5)+
+  geom_ribbon(data = points_x_hicrf %>% filter(type=='bingocardsgambling'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "bingocardsgambling"), alpha = 0.5)+
+  geom_ribbon(data = points_x_hicrf %>% filter(type=='amusementparks'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "amusementparks"), alpha = 0.5)+
+  geom_ribbon(data = points_x_hicrf %>% filter(type=='totartsentertainment'), mapping = aes(x = x, ymin =lower, ymax = upper, fill = "totartsentertainment"), alpha = 0.5)+
+  labs(title="High CRF",x="Sites Added",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")+
   scale_y_continuous(
     breaks = c(300000,100000,30000,10000,3000,1000,300, 100, 30, 10, 3, 0, -3, -10, -30, -100, -300, -1000,-3000,-10000,-30000,-100000,-300000),
     trans = ggallin::pseudolog10_trans, expand = expansion(add = 0.1)) +
@@ -469,80 +479,84 @@ High= ggplot() +
 
 High
 
+Low+High+plot_annotation(title = 'The Effect of Adding Additional Social Infrastructure Sites')+ plot_layout(guides = 'collect')+plot_layout(axis_titles = "collect")+ plot_layout(axes = "collect")
+
 ggplot() +
-  geom_ribbon(data = points_den %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens", alpha = 0.5))+
-  geom_ribbon(data = points_den %>% filter(type=='theatricalproductions'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "theatricalproductions", alpha = 0.5))+
-  geom_ribbon(data = points_den %>% filter(type=='poolhallsbowlingalleys'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "poolhallsbowlingalleys", alpha = 0.5))+
-  geom_ribbon(data = points_den %>% filter(type=='museums'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "museums", alpha = 0.5))+
-  geom_ribbon(data = points_den %>% filter(type=='movietheaters'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "movietheaters", alpha = 0.5))+
-  geom_ribbon(data = points_den %>% filter(type=='hotels'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "hotels", alpha = 0.5))+
-  geom_ribbon(data = points_den %>% filter(type=='casinohotels'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "casinohotels", alpha = 0.5))+
-  geom_ribbon(data = points_den %>% filter(type=='bingocardsgambling'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "bingocardsgambling", alpha = 0.5))+
-  geom_ribbon(data = points_den %>% filter(type=='amusementparks'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "amusementparks", alpha = 0.5))+
-  geom_ribbon(data = points_den %>% filter(type=='totartsentertainment'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "totartsentertainment", alpha = 0.5))+
+  geom_ribbon(data = points_den %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens"), alpha = 0.5)+
+  geom_ribbon(data = points_den %>% filter(type=='theatricalproductions'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "theatricalproductions"), alpha = 0.5)+
+  geom_ribbon(data = points_den %>% filter(type=='poolhallsbowlingalleys'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "poolhallsbowlingalleys"), alpha = 0.5)+
+  geom_ribbon(data = points_den %>% filter(type=='museums'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "museums"), alpha = 0.5)+
+  geom_ribbon(data = points_den %>% filter(type=='movietheaters'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "movietheaters"), alpha = 0.5)+
+  geom_ribbon(data = points_den %>% filter(type=='hotels'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "hotels"), alpha = 0.5)+
+  geom_ribbon(data = points_den %>% filter(type=='casinohotels'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "casinohotels"), alpha = 0.5)+
+  geom_ribbon(data = points_den %>% filter(type=='bingocardsgambling'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "bingocardsgambling"), alpha = 0.5)+
+  geom_ribbon(data = points_den %>% filter(type=='amusementparks'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "amusementparks"), alpha = 0.5)+
+  geom_ribbon(data = points_den %>% filter(type=='totartsentertainment'), mapping = aes(x = pden, ymin =lower, ymax = upper, fill = "totartsentertainment"), alpha = 0.5)+
   labs(title="The Effect of Increasing Social Infrastructure Density",x="Quantile of Social Infrastructure Density",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")+
-  scale_y_continuous(
-    breaks = c(300000,100000,30000,10000,3000,1000,300, 100, 30, 10, 3, 0, -3, -10, -30, -100, -300, -1000,-3000,-10000,-30000,-100000,-300000),
-    trans = ggallin::pseudolog10_trans, expand = expansion(add = 0.1)) +
-  scale_x_continuous(breaks = seq(from = 0, to = 1, by = 0.1),
-                     expand = expansion(add = 0))+
+  #Un-comment to transform Y-axis for Log Scaling:
+  #scale_y_continuous(
+  #  breaks = c(300000,100000,30000,10000,3000,1000,300, 100, 30, 10, 3, 0, -3, -10, -30, -100, -300, -1000,-3000,-10000,-30000,-100000,-300000),
+  #  trans = ggallin::pseudolog10_trans, expand = expansion(add = 0.1)) +
+  #scale_x_continuous(breaks = seq(from = 0, to = 1, by = 0.1),
+  #                   expand = expansion(add = 0))+
   theme_bw(base_size = 14)
+
 ggplot() +
-  geom_ribbon(data = points_pop %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens", alpha = 0.5))+
-  geom_ribbon(data = points_pop %>% filter(type=='theatricalproductions'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "theatricalproductions", alpha = 0.5))+
-  geom_ribbon(data = points_pop %>% filter(type=='poolhallsbowlingalleys'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "poolhallsbowlingalleys", alpha = 0.5))+
-  geom_ribbon(data = points_pop %>% filter(type=='museums'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "museums", alpha = 0.5))+
-  geom_ribbon(data = points_pop %>% filter(type=='movietheaters'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "movietheaters", alpha = 0.5))+
-  geom_ribbon(data = points_pop %>% filter(type=='hotels'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "hotels", alpha = 0.5))+
-  geom_ribbon(data = points_pop %>% filter(type=='casinohotels'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "casinohotels", alpha = 0.5))+
-  geom_ribbon(data = points_pop %>% filter(type=='bingocardsgambling'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "bingocardsgambling", alpha = 0.5))+
-  geom_ribbon(data = points_pop %>% filter(type=='amusementparks'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "amusementparks", alpha = 0.5))+
-  geom_ribbon(data = points_pop %>% filter(type=='totartsentertainment'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "totartsentertainment", alpha = 0.5))+
+  geom_ribbon(data = points_pop %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens"), alpha = 0.5)+
+  geom_ribbon(data = points_pop %>% filter(type=='theatricalproductions'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "theatricalproductions"), alpha = 0.5)+
+  geom_ribbon(data = points_pop %>% filter(type=='poolhallsbowlingalleys'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "poolhallsbowlingalleys"), alpha = 0.5)+
+  geom_ribbon(data = points_pop %>% filter(type=='museums'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "museums"), alpha = 0.5)+
+  geom_ribbon(data = points_pop %>% filter(type=='movietheaters'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "movietheaters"), alpha = 0.5)+
+  geom_ribbon(data = points_pop %>% filter(type=='hotels'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "hotels"), alpha = 0.5)+
+  geom_ribbon(data = points_pop %>% filter(type=='casinohotels'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "casinohotels"), alpha = 0.5)+
+  geom_ribbon(data = points_pop %>% filter(type=='bingocardsgambling'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "bingocardsgambling"), alpha = 0.5)+
+  geom_ribbon(data = points_pop %>% filter(type=='amusementparks'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "amusementparks"), alpha = 0.5)+
+  geom_ribbon(data = points_pop %>% filter(type=='totartsentertainment'), mapping = aes(x = ppop, ymin =lower, ymax = upper, fill = "totartsentertainment"), alpha = 0.5)+
   labs(title="The Effect on Larger Population Census Tracts",x="Quantile of the Population",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")+
-  scale_y_continuous(
-    breaks = c(300000,100000,30000,10000,3000,1000,300, 100, 30, 10, 3, 0, -3, -10, -30, -100, -300, -1000,-3000,-10000,-30000,-100000,-300000),
-    trans = ggallin::pseudolog10_trans, expand = expansion(add = 0.1)) +
-  scale_x_continuous(breaks = seq(from = 0, to = 1, by = 0.1),
-                     expand = expansion(add = 0))+
+  #scale_y_continuous(
+  #  breaks = c(300000,100000,30000,10000,3000,1000,300, 100, 30, 10, 3, 0, -3, -10, -30, -100, -300, -1000,-3000,-10000,-30000,-100000,-300000),
+  #  trans = ggallin::pseudolog10_trans, expand = expansion(add = 0.1)) +
+  #scale_x_continuous(breaks = seq(from = 0, to = 1, by = 0.1),
+  #                   expand = expansion(add = 0))+
   theme_bw(base_size = 14)
 
 ggplot() +
-  geom_ribbon(data = points_area %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens", alpha = 0.5))+
-  geom_ribbon(data = points_area %>% filter(type=='theatricalproductions'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "theatricalproductions", alpha = 0.5))+
-  geom_ribbon(data = points_area %>% filter(type=='poolhallsbowlingalleys'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "poolhallsbowlingalleys", alpha = 0.5))+
-  geom_ribbon(data = points_area %>% filter(type=='museums'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "museums", alpha = 0.5))+
-  geom_ribbon(data = points_area %>% filter(type=='movietheaters'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "movietheaters", alpha = 0.5))+
-  geom_ribbon(data = points_area %>% filter(type=='hotels'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "hotels", alpha = 0.5))+
-  geom_ribbon(data = points_area %>% filter(type=='casinohotels'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "casinohotels", alpha = 0.5))+
-  geom_ribbon(data = points_area %>% filter(type=='bingocardsgambling'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "bingocardsgambling", alpha = 0.5))+
-  geom_ribbon(data = points_area %>% filter(type=='amusementparks'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "amusementparks", alpha = 0.5))+
-  geom_ribbon(data = points_area %>% filter(type=='totartsentertainment'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "totartsentertainment", alpha = 0.5))+
+  geom_ribbon(data = points_area %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens"), alpha = 0.5)+
+  geom_ribbon(data = points_area %>% filter(type=='theatricalproductions'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "theatricalproductions"), alpha = 0.5)+
+  geom_ribbon(data = points_area %>% filter(type=='poolhallsbowlingalleys'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "poolhallsbowlingalleys"), alpha = 0.5)+
+  geom_ribbon(data = points_area %>% filter(type=='museums'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "museums"), alpha = 0.5)+
+  geom_ribbon(data = points_area %>% filter(type=='movietheaters'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "movietheaters"), alpha = 0.5)+
+  geom_ribbon(data = points_area %>% filter(type=='hotels'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "hotels"), alpha = 0.5)+
+  geom_ribbon(data = points_area %>% filter(type=='casinohotels'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "casinohotels"), alpha = 0.5)+
+  geom_ribbon(data = points_area %>% filter(type=='bingocardsgambling'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "bingocardsgambling"), alpha = 0.5)+
+  geom_ribbon(data = points_area %>% filter(type=='amusementparks'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "amusementparks"), alpha = 0.5)+
+  geom_ribbon(data = points_area %>% filter(type=='totartsentertainment'), mapping = aes(x = parea, ymin =lower, ymax = upper, fill = "totartsentertainment"), alpha = 0.5)+
   labs(title="The Effect on Larger Area Census Tracts",x="Quantile of the Area (sq.mi)",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")+
-  scale_y_continuous(
-    breaks = c(300000,100000,30000,10000,3000,1000,300, 100, 30, 10, 3, 0, -3, -10, -30, -100, -300, -1000,-3000,-10000,-30000,-100000,-300000),
-    trans = ggallin::pseudolog10_trans, expand = expansion(add = 0.1)) +
-  scale_x_continuous(breaks = seq(from = 0, to = 1, by = 0.1),
-                     expand = expansion(add = 0))+
+  #scale_y_continuous(
+  #  breaks = c(300000,100000,30000,10000,3000,1000,300, 100, 30, 10, 3, 0, -3, -10, -30, -100, -300, -1000,-3000,-10000,-30000,-100000,-300000),
+  #  trans = ggallin::pseudolog10_trans, expand = expansion(add = 0.1)) +
+  #scale_x_continuous(breaks = seq(from = 0, to = 1, by = 0.1),
+  #                   expand = expansion(add = 0))+
   theme_bw(base_size = 14)
 
 
 ggplot() +
-  geom_ribbon(data = points_crf %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens", alpha = 0.5))+
-  geom_ribbon(data = points_crf %>% filter(type=='theatricalproductions'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "theatricalproductions", alpha = 0.5))+
-  geom_ribbon(data = points_crf %>% filter(type=='poolhallsbowlingalleys'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "poolhallsbowlingalleys", alpha = 0.5))+
-  geom_ribbon(data = points_crf %>% filter(type=='museums'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "museums", alpha = 0.5))+
-  geom_ribbon(data = points_crf %>% filter(type=='movietheaters'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "movietheaters", alpha = 0.5))+
-  geom_ribbon(data = points_crf %>% filter(type=='hotels'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "hotels", alpha = 0.5))+
-  geom_ribbon(data = points_crf %>% filter(type=='casinohotels'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "casinohotels", alpha = 0.5))+
-  geom_ribbon(data = points_crf %>% filter(type=='bingocardsgambling'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "bingocardsgambling", alpha = 0.5))+
-  geom_ribbon(data = points_crf %>% filter(type=='amusementparks'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "amusementparks", alpha = 0.5))+
-  geom_ribbon(data = points_crf %>% filter(type=='totartsentertainment'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "totartsentertainment", alpha = 0.5))+
+  geom_ribbon(data = points_crf %>% filter(type=='zoosaquariumsgardens'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "zoosaquariumsgardens"), alpha = 0.5)+
+  geom_ribbon(data = points_crf %>% filter(type=='theatricalproductions'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "theatricalproductions"), alpha = 0.5)+
+  geom_ribbon(data = points_crf %>% filter(type=='poolhallsbowlingalleys'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "poolhallsbowlingalleys"), alpha = 0.5)+
+  geom_ribbon(data = points_crf %>% filter(type=='museums'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "museums"), alpha = 0.5)+
+  geom_ribbon(data = points_crf %>% filter(type=='movietheaters'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "movietheaters"), alpha = 0.5)+
+  geom_ribbon(data = points_crf %>% filter(type=='hotels'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "hotels"), alpha = 0.5)+
+  geom_ribbon(data = points_crf %>% filter(type=='casinohotels'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "casinohotels"), alpha = 0.5)+
+  geom_ribbon(data = points_crf %>% filter(type=='bingocardsgambling'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "bingocardsgambling"), alpha = 0.5)+
+  geom_ribbon(data = points_crf %>% filter(type=='amusementparks'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "amusementparks"), alpha = 0.5)+
+  geom_ribbon(data = points_crf %>% filter(type=='totartsentertainment'), mapping = aes(x = pcrf, ymin =lower, ymax = upper, fill = "totartsentertainment"), alpha = 0.5)+
   labs(title="The Effect of Increasing Community Risk Factor",x="Quantile of the Community Risk Factor",y="Estimate (Log Estimated Annual Loss in USD, per Capita)")+
-  scale_y_continuous(
-    breaks = c(300000,100000,30000,10000,3000,1000,300, 100, 30, 10, 3, 0, -3, -10, -30, -100, -300, -1000,-3000,-10000,-30000,-100000,-300000),
-    trans = ggallin::pseudolog10_trans, expand = expansion(add = 0.1)) +
-  scale_x_continuous(breaks = seq(from = 0, to = 1, by = 0.1),
-                     expand = expansion(add = 0))+
+  #scale_y_continuous(
+  #  breaks = c(300000,100000,30000,10000,3000,1000,300, 100, 30, 10, 3, 0, -3, -10, -30, -100, -300, -1000,-3000,-10000,-30000,-100000,-300000),
+  #  trans = ggallin::pseudolog10_trans, expand = expansion(add = 0.1)) +
+  #scale_x_continuous(breaks = seq(from = 0, to = 1, by = 0.1),
+  #                   expand = expansion(add = 0))+
   theme_bw(base_size = 14)
 
 
