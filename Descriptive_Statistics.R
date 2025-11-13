@@ -28,8 +28,16 @@ stats_den= Filtered_Dataset_den %>%
     mean_Infra_Den = mean(Infrastructure_Density, na.rm = TRUE),
     sd_Infra_Den = sd(Infrastructure_Density, na.rm = TRUE),
     mean_RISK_VALUE = mean(RISK_VALUE, na.rm = TRUE),
-    sd_RISK_VALUE = sd(RISK_VALUE, na.rm = TRUE)
+    sd_RISK_VALUE = sd(RISK_VALUE, na.rm = TRUE),
+    max_EAL = max(RISK_VALUE/CRF_VALUE, na.rm = TRUE),
+    min_EAL = min(RISK_VALUE/CRF_VALUE, na.rm = TRUE),
+    max_EAL_VALB = max(EAL_VALB, na.rm = TRUE),
+    min_EAL_VALB = min(EAL_VALB, na.rm = TRUE),
   )
+#Range of Estimated Annual Losses Range (Ignoring Tracts with 0 Losses)
+max(stats_den$max_EAL)
+min(stats_den$min_EAL[stats_den$min_EAL>0])
+
 #Per Sq. Mile
 stats_aden= Filtered_Dataset_aden %>%
   group_by(den_type,year,STATE, COUNTY,city) %>% 

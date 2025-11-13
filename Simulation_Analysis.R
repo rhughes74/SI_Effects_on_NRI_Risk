@@ -131,7 +131,7 @@ data$eal %>% log() %>% hist()
 #      = expected annual loss (EAL) x Community Risk Factor
 #      = expected annual loss (EAL) x Social Vulnerability / Community Resilience
 
-# This says, hey, your exposure to natural hazards suggests 
+# This says: your exposure to natural hazards suggests 
 # that you'll lose this much money, BUT
 # you're X amount socially vulnerable AND
 # you're Y amount resilient, SO
@@ -171,13 +171,110 @@ data %>%
       broom::tidy() %>%
       filter(term == "log(den)")
   ) %>%
-  mutate(stars = gtools::stars.pval(p.value))
+  mutate(stars = gtools::stars.pval(p.value)) 
 
 
 
 data %>%
   select(year, city, geoid, pop, area) %>%
   summarize()
+
+#Overall Model Performance
+data %>%
+  filter(any > 0) %>%
+  reframe({
+    # Fit model for each group
+    m <- lm(log(eal / pop) ~ log(den) + log(pop) + log(area) + I(risk / eal), data = cur_data())
+    
+    # Extract key model summaries
+    tidy_df   <- broom::tidy(m)
+    glance_df <- broom::glance(m)
+    
+    # Select coefficient of interest (log(den))
+    beta_row <- tidy_df %>% filter(term == "log(den)")
+    
+    tibble(
+      n        = glance_df$nobs,              # sample size
+      beta     = beta_row$estimate,           # coefficient
+      se       = beta_row$std.error,          # std. error (optional)
+      p.value  = beta_row$p.value,            # p-value (optional)
+      r.sq     = glance_df$r.squared,         # R²
+      rmse     = glance_df$sigma,             # residual std. error = RMSE
+      stars    = gtools::stars.pval(beta_row$p.value)
+    )
+  })
+
+#Assessing Model Performance per Type of Social Infrastructure
+data %>%
+  filter(any > 0) %>%
+  group_by(category, type) %>%
+  reframe({
+    # Fit model for each group
+    m <- lm(log(eal / pop) ~ log(den) + log(pop) + log(area) + I(risk / eal), data = cur_data())
+    
+    # Extract key model summaries
+    tidy_df   <- broom::tidy(m)
+    glance_df <- broom::glance(m)
+    
+    # Select coefficient of interest (log(den))
+    beta_row <- tidy_df %>% filter(term == "log(den)")
+    
+    tibble(
+      n        = glance_df$nobs,              # sample size
+      beta     = beta_row$estimate,           # coefficient
+      se       = beta_row$std.error,          # std. error (optional)
+      p.value  = beta_row$p.value,            # p-value (optional)
+      r.sq     = glance_df$r.squared,         # R²
+      rmse     = glance_df$sigma,             # residual std. error = RMSE
+      stars    = gtools::stars.pval(beta_row$p.value)
+    )
+  })
+
+
+#Assessing Model Performance per Independent Variable
+dep_vars <- c("eal")
+indep_vars <- c("den", "pop", "area", "risk","eal")  # predictors you want to test
+
+# Create all combinations
+combos <- tidyr::expand_grid(dep = dep_vars, indep = indep_vars)
+
+results <- combos %>%
+  mutate(
+    model_info = map2(dep, indep, function(y, x) {
+      df <- data %>% filter(any > 0)
+      # compute descriptive stats
+      dep_mean <- mean(df[[y]], na.rm = TRUE)
+      dep_sd   <- sd(df[[y]], na.rm = TRUE)
+      indep_mean <- mean(df[[x]], na.rm = TRUE)
+      indep_sd   <- sd(df[[x]], na.rm = TRUE)
+      
+      formula_str <- paste0("log(", y, " / pop) ~ log(", x, ") + log(pop) + log(area) + I(risk / eal)")
+      m <- lm(as.formula(formula_str), data = data %>% filter(any > 0))
+      
+      tidy_df   <- broom::tidy(m)
+      glance_df <- broom::glance(m)
+      
+      
+      beta_row <- tidy_df %>% filter(term == paste0("log(", x, ")"))
+      
+      tibble(
+        dep_var  = y,
+        indep_var = x,
+        n        = glance_df$nobs,
+        beta     = beta_row$estimate,
+        se       = beta_row$std.error,
+        p.value  = beta_row$p.value,
+        stars    = gtools::stars.pval(beta_row$p.value),
+        r.sq     = glance_df$r.squared,
+        rmse     = glance_df$sigma,
+        dep_mean  = dep_mean,
+        dep_sd    = dep_sd,
+        indep_mean = indep_mean,
+        indep_sd   = indep_sd 
+      )
+    })
+  ) %>%
+  unnest(model_info)
 
 
 get_estimates = function(data, x = 1, pden = 0.50, ppop = 0.50, parea = 0.50, pcrf = 0.50, ci = 0.95){
@@ -191,6 +288,7 @@ get_estimates = function(data, x = 1, pden = 0.50, ppop = 0.50, parea = 0.50, pc
       # RISK ~ COUNT + POPULATION + AREA
       {
         m = lm(formula = log(eal / pop) ~ log(den + 0.01) + log(pop) + log(area) + crf )
+        #print(summary(m))
         newdata = tibble(
           den = quantile(den, na.rm = TRUE, prob = pden), 
           pop = quantile(pop, na.rm = TRUE, prob = ppop), 
